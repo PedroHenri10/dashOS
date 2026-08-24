@@ -3,3 +3,5 @@ export enum Perfil {
   TECNICO = 'Técnico',
   ATENDENTE = 'Atendente',
 }
+
+export const PERFIS_ADMINISTRACAO: Perfil[] = [Perfil.ADMINISTRADOR];

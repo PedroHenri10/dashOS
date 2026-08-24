@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { authRepository } from './auth.repository'
+import { ERROR_CODES } from '../../erros/errorCodes'
 import { NaoAutorizadoError, TokenInvalidoError } from '../../shared/errors/AppError'
 import { LoginDto } from './auth.dto'
 
@@ -19,10 +20,10 @@ export const authService = {
   async login(dto: LoginDto) {
     const usuario = await authRepository.buscarPorEmail(dto.email)
 
-    if (!usuario || !usuario.ativo) throw new NaoAutorizadoError()
+    if (!usuario || !usuario.ativo) throw new NaoAutorizadoError(ERROR_CODES.CREDENCIAIS_INVALIDAS)
 
     const senhaCorreta = await bcrypt.compare(dto.senha, usuario.senha)
-    if (!senhaCorreta) throw new NaoAutorizadoError()
+    if (!senhaCorreta) throw new NaoAutorizadoError(ERROR_CODES.CREDENCIAIS_INVALIDAS)
 
     const payload = {
       sub:    usuario.id,
@@ -51,7 +52,7 @@ export const authService = {
       }
 
       const usuario = await authRepository.buscarPorId(decoded.sub)
-      if (!usuario) throw new NaoAutorizadoError()
+      if (!usuario) throw new NaoAutorizadoError(ERROR_CODES.NAO_AUTORIZADO)
 
       const novoPayload = {
         sub:    usuario.id,
@@ -66,7 +67,7 @@ export const authService = {
 
   async me(userId: number) {
     const usuario = await authRepository.buscarPorId(userId)
-    if (!usuario) throw new NaoAutorizadoError()
+    if (!usuario) throw new NaoAutorizadoError(ERROR_CODES.NAO_AUTORIZADO)
     return usuario
   },
 }
