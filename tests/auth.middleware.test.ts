@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import bcrypt from 'bcrypt'
-import { ERROR_CODES } from '../../erros/errorCodes'
-import { authRepository } from '../../modules/auth/auth.repository'
-import { authService } from '../../modules/auth/auth.service'
-import { Perfil } from '../enums/perfil.enum'
-import { NaoAutorizadoError, ProibidoError } from '../errors/AppError'
-import { autenticar, exigirPerfil } from './auth.middleware'
+import { ERROR_CODES } from '../src/erros/errorCodes'
+import { authRepository } from '../src/modules/auth/auth.repository'
+import { authService } from '../src/modules/auth/auth.service'
+import { Perfil } from '../src/shared/enums/perfil.enum'
+import { NaoAutorizadoError, ProibidoError } from '../src/shared/errors/AppError'
+import { autenticar, exigirPerfil } from '../src/shared/middlewares/auth.middleware'
 
 test('authService.login should reject invalid credentials with specific error code', async () => {
   const originalBuscarPorEmail = authRepository.buscarPorEmail
