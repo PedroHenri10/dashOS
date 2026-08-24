@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { Perfil } from '@prisma/client'
+import { Perfil } from '../../shared/enums/perfil.enum'
 import { autenticar, exigirPerfil } from '../../shared/middlewares/auth.middleware'
 import { equipamentosController } from './equipamentos.controller'
 

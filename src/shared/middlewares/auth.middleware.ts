@@ -45,6 +45,8 @@ export async function autenticar(request: FastifyRequest, _reply: FastifyReply) 
 
 export function exigirPerfil(...perfis: string[]) {
   return async (request: FastifyRequest, _reply: FastifyReply) => {
-    if (!request.user || !perfis.includes(request.user.perfil)) throw new ProibidoError()
+    if (!request.user || !perfis.includes(request.user.perfil)) {
+      throw new ProibidoError()
+    }
   }
 }
