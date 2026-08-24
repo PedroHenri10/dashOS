@@ -15,7 +15,7 @@ function buildErrorPayload(status: number, code: number, message: string, path: 
 }
 
 export function errorHandler(
-  err: FastifyError,
+  err: unknown,
   request: FastifyRequest,
   reply: FastifyReply
 ) {
@@ -26,7 +26,7 @@ export function errorHandler(
   }
 
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    if (err.code === 'P2025')
+    if (err.code === 'P2025') {
       return reply.status(ERROR_CODES.REGISTRO_NAO_ENCONTRADO.status)
         .send(buildErrorPayload(
           ERROR_CODES.REGISTRO_NAO_ENCONTRADO.status,
@@ -34,7 +34,9 @@ export function errorHandler(
           ERROR_CODES.REGISTRO_NAO_ENCONTRADO.message,
           path
         ))
-    if (err.code === 'P2002')
+    }
+
+    if (err.code === 'P2002') {
       return reply.status(ERROR_CODES.REGISTRO_JA_EXISTE.status)
         .send(buildErrorPayload(
           ERROR_CODES.REGISTRO_JA_EXISTE.status,
@@ -42,10 +44,11 @@ export function errorHandler(
           ERROR_CODES.REGISTRO_JA_EXISTE.message,
           path
         ))
+    }
   }
 
-  if (err instanceof ZodError || err.name === 'ZodError') {
-    const zodError = err instanceof ZodError ? err : (err as unknown as ZodError)
+  if (err instanceof ZodError || (typeof err === 'object' && err !== null && 'name' in err && err.name === 'ZodError')) {
+    const zodError = err instanceof ZodError ? err : (err as ZodError)
     return reply.status(ERROR_CODES.DADOS_INVALIDOS.status)
       .send({
         ...buildErrorPayload(
@@ -58,7 +61,8 @@ export function errorHandler(
       })
   }
 
-  console.error('ERRO NÃO TRATADO:', err)
+  const fastifyError = err as FastifyError | undefined
+  console.error('ERRO NÃO TRATADO:', fastifyError ?? err)
   return reply.status(ERROR_CODES.ERRO_INTERNO.status)
     .send(buildErrorPayload(
       ERROR_CODES.ERRO_INTERNO.status,

@@ -1,7 +1,7 @@
-import { ErrorCode, ERROR_CODES } from '../../erros/errorCodes'
+import { ErrorDefinition, ErrorCode, ERROR_CODES } from '../../erros/errorCodes'
 
 export class AppError extends Error {
-  constructor(public readonly errorCode: ErrorCode) {
+  constructor(public readonly errorCode: ErrorDefinition) {
     super(errorCode.message)
     this.name = 'AppError'
   }
@@ -20,31 +20,31 @@ export class AppError extends Error {
 }
 
 export class NaoEncontradoError extends AppError {
-  constructor(errorCode: ErrorCode = ERROR_CODES.REGISTRO_NAO_ENCONTRADO) {
+  constructor(errorCode: ErrorDefinition = ERROR_CODES.REGISTRO_NAO_ENCONTRADO) {
     super(errorCode)
   }
 }
 
 export class NaoAutorizadoError extends AppError {
-  constructor(errorCode: ErrorCode = ERROR_CODES.NAO_AUTORIZADO) {
+  constructor(errorCode: ErrorDefinition = ERROR_CODES.NAO_AUTORIZADO) {
     super(errorCode)
   }
 }
 
 export class ProibidoError extends AppError {
-  constructor(errorCode: ErrorCode = ERROR_CODES.SEM_PERMISSAO) {
+  constructor(errorCode: ErrorDefinition = ERROR_CODES.SEM_PERMISSAO) {
     super(errorCode)
   }
 }
 
 export class ConflitoError extends AppError {
-  constructor(errorCode: ErrorCode = ERROR_CODES.REGISTRO_JA_EXISTE) {
+  constructor(errorCode: ErrorDefinition = ERROR_CODES.REGISTRO_JA_EXISTE) {
     super(errorCode)
   }
 }
 
 export class TokenInvalidoError extends AppError {
-  constructor(errorCode: ErrorCode = ERROR_CODES.TOKEN_INVALIDO) {
+  constructor(errorCode: ErrorDefinition = ERROR_CODES.TOKEN_INVALIDO) {
     super(errorCode)
   }
 }
