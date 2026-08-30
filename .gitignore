@@ -8,6 +8,7 @@ yarn-error.log*
 .env.local
 dist
 /src/generated/prisma
+coverage/
 .agents
 .claude
 .windsurf/
