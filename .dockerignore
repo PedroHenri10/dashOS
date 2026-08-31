@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.env
+coverage
+docs
+.windsurf
+.claude
+.agents
+npm-debug.log
