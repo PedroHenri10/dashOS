@@ -70,6 +70,35 @@ test('servicos controller covers list, create, update and reactivation flows', a
   servicosService.reativar = originalReativar
 })
 
+test('servicos service covers list and lookup branches', async () => {
+  const originalListar = servicosRepository.listar
+  const originalBuscarPorId = servicosRepository.buscarPorId
+
+  servicosRepository.listar = async () => ({
+    dados: [{ id: 2, nome: 'Diagnóstico Lista', ativo: true }],
+    total: 1,
+    pagina: 1,
+    limite: 10,
+  }) as any
+
+  servicosRepository.buscarPorId = async (id: number) => ({
+    id,
+    nome: 'Diagnóstico Busca',
+    ativo: true,
+  }) as any
+
+  const listed = await servicosService.listar({ busca: 'Diagnóstico', ativo: 'true', pagina: 1, limite: 10 })
+  assert.equal(listed.total, 1)
+  assert.equal(listed.dados[0].nome, 'Diagnóstico Lista')
+
+  const found = await servicosService.buscarPorId(4)
+  assert.equal(found.id, 4)
+  assert.equal(found.nome, 'Diagnóstico Busca')
+
+  servicosRepository.listar = originalListar
+  servicosRepository.buscarPorId = originalBuscarPorId
+})
+
 test('servicos service validates update, deactivate and reactivate flows through repository checks', async () => {
   const originalBuscarPorId = servicosRepository.buscarPorId
   const originalAtualizar = servicosRepository.atualizar

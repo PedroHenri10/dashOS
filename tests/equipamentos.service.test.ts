@@ -36,6 +36,35 @@ test('equipamentos service validates type duplicate and creation', async () => {
   equipamentosRepository.criarTipo = originalCriarTipo
 })
 
+test('equipamentos service covers list and lookup branches', async () => {
+  const originalListar = equipamentosRepository.listar
+  const originalBuscarPorId = equipamentosRepository.buscarPorId
+
+  equipamentosRepository.listar = async () => ({
+    dados: [{ id: 1, nome: 'Equipamento Lista', ativo: true }],
+    total: 1,
+    pagina: 1,
+    limite: 10,
+  }) as any
+
+  equipamentosRepository.buscarPorId = async (id: number) => ({
+    id,
+    nome: 'Equipamento Busca',
+    ativo: true,
+  }) as any
+
+  const listed = await equipamentosService.listar({ busca: 'Equipamento', tipo: 'Celular', ativo: 'true', pagina: 1, limite: 10 })
+  assert.equal(listed.total, 1)
+  assert.equal(listed.dados[0].nome, 'Equipamento Lista')
+
+  const found = await equipamentosService.buscarPorId(9)
+  assert.equal(found.id, 9)
+  assert.equal(found.nome, 'Equipamento Busca')
+
+  equipamentosRepository.listar = originalListar
+  equipamentosRepository.buscarPorId = originalBuscarPorId
+})
+
 test('equipamentos service validates update, deactivate and reactivate flows', async () => {
   const originalBuscarPorId = equipamentosRepository.buscarPorId
   const originalAtualizar = equipamentosRepository.atualizar
