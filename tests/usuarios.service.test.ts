@@ -38,3 +38,29 @@ test('usuarios service validates duplicate email and successful creation', async
   usuariosRepository.buscarPorEmail = originalBuscarPorEmail
   usuariosRepository.criar = originalCriar
 })
+
+test('usuarios service validates update, deactivate and profile listing flows', async () => {
+  const originalBuscarPorId = usuariosRepository.buscarPorId
+  const originalAtualizar = usuariosRepository.atualizar
+  const originalDesativar = usuariosRepository.desativar
+  const originalListarPerfis = usuariosRepository.listarPerfis
+
+  usuariosRepository.buscarPorId = async () => ({ id: 5, nome_completo: 'Usuario Atual', ativo: true }) as any
+  usuariosRepository.atualizar = async (id: number, payload: any) => ({ id, ...payload }) as any
+  usuariosRepository.desativar = async (id: number) => ({ id, ativo: false }) as any
+  usuariosRepository.listarPerfis = async () => [{ id: 1, nome: 'ADMINISTRADOR' }] as any
+
+  const updated = await usuariosService.atualizar(5, { nome_completo: 'Usuario Atualizado' } as any)
+  assert.equal(updated.id, 5)
+
+  const disabled = await usuariosService.desativar(5)
+  assert.equal(disabled.ativo, false)
+
+  const perfis = await usuariosService.listarPerfis()
+  assert.equal(perfis[0].nome, 'ADMINISTRADOR')
+
+  usuariosRepository.buscarPorId = originalBuscarPorId
+  usuariosRepository.atualizar = originalAtualizar
+  usuariosRepository.desativar = originalDesativar
+  usuariosRepository.listarPerfis = originalListarPerfis
+})
