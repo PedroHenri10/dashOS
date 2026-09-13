@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { servicosController } from '../src/modules/servicos/servicos.controller'
+import { servicosRepository } from '../src/modules/servicos/servicos.repository'
 import { servicosService } from '../src/modules/servicos/servicos.service'
 
 function makeReply() {
@@ -67,4 +68,31 @@ test('servicos controller covers list, create, update and reactivation flows', a
   servicosService.atualizar = originalAtualizar
   servicosService.desativar = originalDesativar
   servicosService.reativar = originalReativar
+})
+
+test('servicos service validates update, deactivate and reactivate flows through repository checks', async () => {
+  const originalBuscarPorId = servicosRepository.buscarPorId
+  const originalAtualizar = servicosRepository.atualizar
+  const originalDesativar = servicosRepository.desativar
+  const originalReativar = servicosRepository.reativar
+
+  servicosRepository.buscarPorId = async () => ({ id: 3, nome: 'Diagnóstico', ativo: true }) as any
+  servicosRepository.atualizar = async (id: number, payload: any) => ({ id, ...payload, ativo: true }) as any
+  servicosRepository.desativar = async (id: number) => ({ id, ativo: false }) as any
+  servicosRepository.reativar = async (id: number) => ({ id, ativo: true }) as any
+
+  const updated = await servicosService.atualizar(3, { nome: 'Diagnóstico Atualizado' } as any)
+  assert.equal(updated.id, 3)
+  assert.equal(updated.nome, 'Diagnóstico Atualizado')
+
+  const disabled = await servicosService.desativar(3)
+  assert.equal(disabled.ativo, false)
+
+  const reactivated = await servicosService.reativar(3)
+  assert.equal(reactivated.ativo, true)
+
+  servicosRepository.buscarPorId = originalBuscarPorId
+  servicosRepository.atualizar = originalAtualizar
+  servicosRepository.desativar = originalDesativar
+  servicosRepository.reativar = originalReativar
 })
