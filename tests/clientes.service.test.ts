@@ -29,6 +29,36 @@ test('clientes service validates cpf/cnpj duplication and successful creation', 
   clientesRepository.criar = originalCriar
 })
 
+test('clientes service covers list and lookup branches', async () => {
+  const originalListar = clientesRepository.listar
+  const originalBuscarPorId = clientesRepository.buscarPorId
+
+  clientesRepository.listar = async () => ({
+    dados: [{ id: 3, nome: 'Cliente Lista', cpf_cnpj: '111' }],
+    total: 1,
+    pagina: 1,
+    limite: 10,
+  }) as any
+
+  clientesRepository.buscarPorId = async (id: number) => ({
+    id,
+    nome: 'Cliente Busca',
+    cpf_cnpj: '222',
+    ativo: true,
+  }) as any
+
+  const listed = await clientesService.listar({ busca: 'Cliente', tipo: 'Pessoa Física', ativo: 'true', pagina: 1, limite: 10 })
+  assert.equal(listed.total, 1)
+  assert.equal(listed.dados[0].nome, 'Cliente Lista')
+
+  const found = await clientesService.buscarPorId(8)
+  assert.equal(found.id, 8)
+  assert.equal(found.nome, 'Cliente Busca')
+
+  clientesRepository.listar = originalListar
+  clientesRepository.buscarPorId = originalBuscarPorId
+})
+
 test('clientes service validates update, deactivate and reactivate flows through repository checks', async () => {
   const originalBuscarPorId = clientesRepository.buscarPorId
   const originalBuscarPorCpfCnpj = clientesRepository.buscarPorCpfCnpj
