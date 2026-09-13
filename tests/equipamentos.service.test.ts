@@ -35,3 +35,30 @@ test('equipamentos service validates type duplicate and creation', async () => {
   equipamentosRepository.buscarTipoPorNome = originalBuscarTipoPorNome
   equipamentosRepository.criarTipo = originalCriarTipo
 })
+
+test('equipamentos service validates update, deactivate and reactivate flows', async () => {
+  const originalBuscarPorId = equipamentosRepository.buscarPorId
+  const originalAtualizar = equipamentosRepository.atualizar
+  const originalDesativar = equipamentosRepository.desativar
+  const originalReativar = equipamentosRepository.reativar
+
+  equipamentosRepository.buscarPorId = async () => ({ id: 4, nome: 'Equipamento', ativo: true }) as any
+  equipamentosRepository.atualizar = async (id: number, payload: any) => ({ id, ...payload, ativo: true }) as any
+  equipamentosRepository.desativar = async (id: number) => ({ id, ativo: false }) as any
+  equipamentosRepository.reativar = async (id: number) => ({ id, ativo: true }) as any
+
+  const updated = await equipamentosService.atualizar(4, { nome: 'Equipamento Atualizado' } as any)
+  assert.equal(updated.id, 4)
+  assert.equal(updated.nome, 'Equipamento Atualizado')
+
+  const disabled = await equipamentosService.desativar(4)
+  assert.equal(disabled.ativo, false)
+
+  const reactivated = await equipamentosService.reativar(4)
+  assert.equal(reactivated.ativo, true)
+
+  equipamentosRepository.buscarPorId = originalBuscarPorId
+  equipamentosRepository.atualizar = originalAtualizar
+  equipamentosRepository.desativar = originalDesativar
+  equipamentosRepository.reativar = originalReativar
+})
