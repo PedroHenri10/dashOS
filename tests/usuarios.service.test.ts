@@ -39,6 +39,42 @@ test('usuarios service validates duplicate email and successful creation', async
   usuariosRepository.criar = originalCriar
 })
 
+test('usuarios service covers list, lookup and profile retrieval branches', async () => {
+  const originalListar = usuariosRepository.listar
+  const originalBuscarPorId = usuariosRepository.buscarPorId
+  const originalListarPerfis = usuariosRepository.listarPerfis
+
+  usuariosRepository.listar = async () => ({
+    dados: [{ id: 1, nome_completo: 'Usuario Lista', email: 'lista@email.com' }],
+    total: 1,
+    pagina: 1,
+    limite: 10,
+  }) as any
+
+  usuariosRepository.buscarPorId = async (id: number) => ({
+    id,
+    nome_completo: 'Usuario Busca',
+    email: 'busca@email.com',
+  }) as any
+
+  usuariosRepository.listarPerfis = async () => [{ id: 1, nome: 'ADMINISTRADOR' }] as any
+
+  const listed = await usuariosService.listar({ busca: 'Usuario', ativo: 'true', pagina: 1, limite: 10 })
+  assert.equal(listed.total, 1)
+  assert.equal(listed.dados[0].email, 'lista@email.com')
+
+  const found = await usuariosService.buscarPorId(7)
+  assert.equal(found.id, 7)
+  assert.equal(found.nome_completo, 'Usuario Busca')
+
+  const perfis = await usuariosService.listarPerfis()
+  assert.equal(perfis[0].nome, 'ADMINISTRADOR')
+
+  usuariosRepository.listar = originalListar
+  usuariosRepository.buscarPorId = originalBuscarPorId
+  usuariosRepository.listarPerfis = originalListarPerfis
+})
+
 test('usuarios service validates update, deactivate and profile listing flows', async () => {
   const originalBuscarPorId = usuariosRepository.buscarPorId
   const originalAtualizar = usuariosRepository.atualizar
