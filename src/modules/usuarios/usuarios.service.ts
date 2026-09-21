@@ -3,6 +3,7 @@ import { usuariosRepository } from './usuarios.repository'
 import { ConflitoError } from '../../shared/errors/AppError'
 import { ERROR_CODES } from '../../erros/errorCodes'
 import { CriarUsuarioDto, AtualizarUsuarioDto, FiltroUsuarioDto } from './usuarios.dto'
+import { Perfil } from '../../shared/enums/perfil.enum'
 
 export const usuariosService = {
   async listar(filtros: FiltroUsuarioDto) {
@@ -18,8 +19,9 @@ export const usuariosService = {
     if (emailEmUso) throw new ConflitoError(ERROR_CODES.EMAIL_JA_CADASTRADO)
 
     const senhaHash = await bcrypt.hash(dto.senha, 10)
+    const perfil_id = dto.perfil_id ?? (await usuariosRepository.buscarOuCriarPerfil(Perfil.TECNICO)).id
 
-    return usuariosRepository.criar({ ...dto, senha: senhaHash })
+    return usuariosRepository.criar({ ...dto, perfil_id, senha: senhaHash })
   },
 
   async atualizar(id: number, dto: AtualizarUsuarioDto) {

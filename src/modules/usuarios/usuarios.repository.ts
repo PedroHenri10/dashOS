@@ -1,5 +1,6 @@
 import prisma from '../../shared/lib/prisma'
 import { FiltroUsuarioDto } from './usuarios.dto'
+import { Perfil } from '../../shared/enums/perfil.enum'
 
 export const usuariosRepository = {
 
@@ -41,6 +42,13 @@ export const usuariosRepository = {
 
   buscarPorEmail: (email: string) =>
     prisma.usuario.findUnique({ where: { email } }),
+
+  buscarOuCriarPerfil: (nome: Perfil) =>
+    prisma.perfil.upsert({
+      where: { nome },
+      update: {},
+      create: { nome },
+    }),
 
   criar: (dados: any) =>
     prisma.usuario.create({
