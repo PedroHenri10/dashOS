@@ -5,7 +5,7 @@ export const CriarUsuarioSchema = z.object({
   email:         z.string().email('E-mail inválido'),
   senha:         z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
   telefone:      z.string().optional(),
-  perfil_id:     z.number().int().positive('Perfil inválido'),
+  perfil_id:     z.number().int().positive('Perfil inválido').optional(),
 })
 
 export const AtualizarUsuarioSchema = z.object({
