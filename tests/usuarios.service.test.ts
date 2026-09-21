@@ -7,6 +7,7 @@ import { ERROR_CODES } from '../src/erros/errorCodes'
 
 test('usuarios service validates duplicate email and successful creation', async () => {
   const originalBuscarPorEmail = usuariosRepository.buscarPorEmail
+  const originalBuscarOuCriarPerfil = usuariosRepository.buscarOuCriarPerfil
   const originalCriar = usuariosRepository.criar
 
   usuariosRepository.buscarPorEmail = async () => null
@@ -36,5 +37,36 @@ test('usuarios service validates duplicate email and successful creation', async
   )
 
   usuariosRepository.buscarPorEmail = originalBuscarPorEmail
+  usuariosRepository.buscarOuCriarPerfil = originalBuscarOuCriarPerfil
+  usuariosRepository.criar = originalCriar
+})
+
+test('usuarios service defaults new users to the technician profile', async () => {
+  const originalBuscarPorEmail = usuariosRepository.buscarPorEmail
+  const originalBuscarOuCriarPerfil = usuariosRepository.buscarOuCriarPerfil
+  const originalCriar = usuariosRepository.criar
+  let payload: any
+
+  usuariosRepository.buscarPorEmail = async () => null
+  usuariosRepository.buscarOuCriarPerfil = async (nome) => {
+    assert.equal(nome, 'Técnico')
+    return { id: 2, nome } as any
+  }
+  usuariosRepository.criar = async (dados: any) => {
+    payload = dados
+    return { id: 11, ...dados } as any
+  }
+
+  await usuariosService.criar({
+    nome_completo: 'Tecnico Novo',
+    email: 'tecnico@teste.com',
+    senha: '123456',
+  })
+
+  assert.equal(payload.perfil_id, 2)
+  assert.notEqual(payload.senha, '123456')
+
+  usuariosRepository.buscarPorEmail = originalBuscarPorEmail
+  usuariosRepository.buscarOuCriarPerfil = originalBuscarOuCriarPerfil
   usuariosRepository.criar = originalCriar
 })
