@@ -42,6 +42,18 @@ export const equipamentosRepository = {
       include: { tipo: true, cliente: true },
     }),
 
+  buscarTipoPorId: (id: number) =>
+    prisma.tipoEquipamento.findUnique({ where: { id } }),
+
+  buscarClientePorId: (id: number) =>
+    prisma.cliente.findUnique({ where: { id } }),
+
+  buscarPorSerieImei: (serie_imei: string) =>
+    prisma.equipamento.findFirst({ where: { serie_imei } }),
+
+  buscarPorCodigoEtiqueta: (cod_etiqueta: string) =>
+    prisma.equipamento.findFirst({ where: { cod_etiqueta } }),
+
   criar: (dados: any) =>
     prisma.equipamento.create({
       data: dados,

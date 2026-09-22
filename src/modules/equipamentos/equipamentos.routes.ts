@@ -9,8 +9,8 @@ export const equipamentosRoutes: FastifyPluginAsync = async (app) => {
 
   app.get('/', { preHandler: autenticar }, equipamentosController.listar)
   app.get<{ Params: { id: string } }>('/:id', { preHandler: autenticar }, equipamentosController.buscar)
-  app.post('/', { preHandler: autenticar }, equipamentosController.criar)
-  app.put<{ Params: { id: string } }>('/:id', { preHandler: autenticar }, equipamentosController.atualizar)
-  app.delete<{ Params: { id: string } }>('/:id', { preHandler: autenticar }, equipamentosController.desativar)
-  app.patch<{ Params: { id: string } }>('/:id/reativar', { preHandler: autenticar }, equipamentosController.reativar)
+  app.post('/', { preHandler: [autenticar, exigirPerfil(Perfil.ADMINISTRADOR)] }, equipamentosController.criar)
+  app.put<{ Params: { id: string } }>('/:id', { preHandler: [autenticar, exigirPerfil(Perfil.ADMINISTRADOR)] }, equipamentosController.atualizar)
+  app.delete<{ Params: { id: string } }>('/:id', { preHandler: [autenticar, exigirPerfil(Perfil.ADMINISTRADOR)] }, equipamentosController.desativar)
+  app.patch<{ Params: { id: string } }>('/:id/reativar', { preHandler: [autenticar, exigirPerfil(Perfil.ADMINISTRADOR)] }, equipamentosController.reativar)
 }
