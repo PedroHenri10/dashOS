@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { servicosController } from '../src/modules/servicos/servicos.controller'
+import { servicosRepository } from '../src/modules/servicos/servicos.repository'
 import { servicosService } from '../src/modules/servicos/servicos.service'
 
 function makeReply() {
@@ -67,4 +68,26 @@ test('servicos controller covers list, create, update and reactivation flows', a
   servicosService.atualizar = originalAtualizar
   servicosService.desativar = originalDesativar
   servicosService.reativar = originalReativar
+})
+
+test('servicos service rejects duplicate names', async () => {
+  const originalBuscarPorNome = servicosRepository.buscarPorNome
+  const originalCriar = servicosRepository.criar
+
+  servicosRepository.buscarPorNome = async () => ({ id: 4, nome: 'Diagnóstico' }) as any
+  await assert.rejects(
+    () => servicosService.criar({ nome: 'Diagnóstico' } as any),
+    (error: unknown) => {
+      assert.equal(error?.constructor?.name, 'ConflitoError')
+      return true
+    },
+  )
+
+  servicosRepository.buscarPorNome = async () => null
+  servicosRepository.criar = async (dados: any) => ({ id: 99, ...dados }) as any
+  const created = await servicosService.criar({ nome: 'Novo serviço' } as any)
+  assert.equal(created.id, 99)
+
+  servicosRepository.buscarPorNome = originalBuscarPorNome
+  servicosRepository.criar = originalCriar
 })
