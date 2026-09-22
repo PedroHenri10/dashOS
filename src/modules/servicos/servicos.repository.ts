@@ -32,6 +32,9 @@ export const servicosRepository = {
   buscarPorId: (id: number) =>
     prisma.tipoServico.findUniqueOrThrow({ where: { id } }),
 
+  buscarPorNome: (nome: string) =>
+    prisma.tipoServico.findFirst({ where: { nome } }),
+
   criar: (dados: any) =>
     prisma.tipoServico.create({ data: dados }),
 
