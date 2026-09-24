@@ -6,7 +6,7 @@ import { fornecedoresRepository } from '../src/modules/fornecedores/fornecedores
 test('fornecedores repository covers list, lookup, create, update and activate/deactivate flows', async () => {
   const originalFornecedor = prisma.fornecedor
 
-  prisma.fornecedor = {
+  ;(prisma as any).fornecedor = {
     findMany: async (args: any) => {
       assert.ok(args.where)
       return [{ id: 1, nome_fantasia: 'Forn 1', cnpj: '11', ativo: true }]
@@ -34,5 +34,5 @@ test('fornecedores repository covers list, lookup, create, update and activate/d
   assert.equal(disabled.id, 1)
   assert.equal(reactivated.id, 1)
 
-  prisma.fornecedor = originalFornecedor
+  ;(prisma as any).fornecedor = originalFornecedor
 })

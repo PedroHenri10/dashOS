@@ -6,7 +6,7 @@ import { authRepository } from '../src/modules/auth/auth.repository'
 test('auth repository reads usuario by email and id', async () => {
   const originalUsuario = prisma.usuario
 
-  prisma.usuario = {
+  ;(prisma as any).usuario = {
     findUnique: async ({ where }: any) => {
       if (where.email) return { id: 7, email: where.email, nome_completo: 'Ana', ativo: true, perfil: { nome: 'ADMINISTRADOR' } }
       if (where.id === 7) return { id: 7, nome_completo: 'Ana', ativo: true, perfil: { nome: 'ADMINISTRADOR' } }
@@ -20,5 +20,5 @@ test('auth repository reads usuario by email and id', async () => {
   assert.equal(byEmail?.email, 'ana@email.com')
   assert.equal(byId?.id, 7)
 
-  prisma.usuario = originalUsuario
+  ;(prisma as any).usuario = originalUsuario
 })

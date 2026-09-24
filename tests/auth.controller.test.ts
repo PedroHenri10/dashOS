@@ -41,7 +41,7 @@ test('auth controller returns login, refresh and me payloads', async () => {
     { body: { email: 'ana@email.com', senha: '123456' } } as any,
     loginReply as any,
   )
-  assert.equal(loginResult.sucesso, true)
+  assert.equal((loginResult as any).sucesso, true)
   assert.equal(loginReply.getStatus(), 200)
 
   const refreshReply = makeReply()
@@ -49,12 +49,12 @@ test('auth controller returns login, refresh and me payloads', async () => {
     { body: { refreshToken: 'token-refresh' } } as any,
     refreshReply as any,
   )
-  assert.equal(refreshResult.sucesso, true)
+  assert.equal((refreshResult as any).sucesso, true)
   assert.equal(refreshReply.getStatus(), 200)
 
   const meReply = makeReply()
   const meResult = await authController.me({ user: { sub: 1 } } as any, meReply as any)
-  assert.equal(meResult.sucesso, true)
+  assert.equal((meResult as any).sucesso, true)
   assert.equal(meReply.getStatus(), 200)
 
   authService.login = originalLogin

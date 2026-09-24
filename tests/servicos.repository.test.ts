@@ -6,7 +6,7 @@ import { servicosRepository } from '../src/modules/servicos/servicos.repository'
 test('servicos repository covers list, lookup, create, update and activate/deactivate flows', async () => {
   const originalTipoServico = prisma.tipoServico
 
-  prisma.tipoServico = {
+  ;(prisma as any).tipoServico = {
     findMany: async (args: any) => {
       assert.ok(args.where)
       return [{ id: 1, nome: 'Diagnóstico', ativo: true }]
@@ -31,5 +31,5 @@ test('servicos repository covers list, lookup, create, update and activate/deact
   assert.equal(disabled.id, 1)
   assert.equal(reactivated.id, 1)
 
-  prisma.tipoServico = originalTipoServico
+  ;(prisma as any).tipoServico = originalTipoServico
 })

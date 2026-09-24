@@ -7,7 +7,7 @@ test('equipamentos repository covers list, lookup, create, update and type flows
   const originalEquipamento = prisma.equipamento
   const originalTipoEquipamento = prisma.tipoEquipamento
 
-  prisma.equipamento = {
+  ;(prisma as any).equipamento = {
     findMany: async (args: any) => {
       assert.ok(args.where)
       return [{ id: 1, nome: 'iPhone', tipo: { nome: 'Celular' }, cliente: { nome: 'Cliente A' } }]
@@ -18,7 +18,7 @@ test('equipamentos repository covers list, lookup, create, update and type flows
     update: async (args: any) => ({ id: args.where.id, ...args.data, tipo: { nome: 'Celular' }, cliente: { nome: 'Cliente A' } }),
   } as any
 
-  prisma.tipoEquipamento = {
+  ;(prisma as any).tipoEquipamento = {
     findMany: async () => [{ id: 1, nome: 'Celular' }],
     findUnique: async (args: any) => ({ id: 9, nome: args.where.nome }),
     create: async (args: any) => ({ id: 50, ...args.data }),
@@ -44,6 +44,6 @@ test('equipamentos repository covers list, lookup, create, update and type flows
   assert.equal(tipoFind?.nome, 'Celular')
   assert.equal(tipoCreate.id, 50)
 
-  prisma.equipamento = originalEquipamento
-  prisma.tipoEquipamento = originalTipoEquipamento
+  ;(prisma as any).equipamento = originalEquipamento
+  ;(prisma as any).tipoEquipamento = originalTipoEquipamento
 })

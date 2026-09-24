@@ -33,21 +33,21 @@ export const clientesRepository = {
     return { dados, total, pagina, limite }
   },
 
-  buscarPorId: (id: number) =>
+  buscarPorId: async (id: number) =>
     prisma.cliente.findUniqueOrThrow({ where: { id } }),
 
-  buscarPorCpfCnpj: (cpf_cnpj: string) =>
+  buscarPorCpfCnpj: async (cpf_cnpj: string) =>
     prisma.cliente.findUnique({ where: { cpf_cnpj } }),
 
-  criar: (dados: any) =>
+  criar: async (dados: any) =>
     prisma.cliente.create({ data: dados }),
 
-  atualizar: (id: number, dados: any) =>
+  atualizar: async (id: number, dados: any) =>
     prisma.cliente.update({ where: { id }, data: dados }),
 
-  desativar: (id: number) =>
+  desativar: async (id: number) =>
     prisma.cliente.update({ where: { id }, data: { ativo: false } }),
 
-  reativar: (id: number) =>
+  reativar: async (id: number) =>
     prisma.cliente.update({ where: { id }, data: { ativo: true } }),
 }

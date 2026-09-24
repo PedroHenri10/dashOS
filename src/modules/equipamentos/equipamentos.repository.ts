@@ -36,49 +36,49 @@ export const equipamentosRepository = {
     return { dados, total, pagina, limite }
   },
 
-  buscarPorId: (id: number) =>
+  buscarPorId: async (id: number) =>
     prisma.equipamento.findUniqueOrThrow({
       where: { id },
       include: { tipo: true, cliente: true },
     }),
 
-  buscarTipoPorId: (id: number) =>
+  buscarTipoPorId: async (id: number) =>
     prisma.tipoEquipamento.findUnique({ where: { id } }),
 
-  buscarClientePorId: (id: number) =>
+  buscarClientePorId: async (id: number) =>
     prisma.cliente.findUnique({ where: { id } }),
 
-  buscarPorSerieImei: (serie_imei: string) =>
+  buscarPorSerieImei: async (serie_imei: string) =>
     prisma.equipamento.findFirst({ where: { serie_imei } }),
 
-  buscarPorCodigoEtiqueta: (cod_etiqueta: string) =>
+  buscarPorCodigoEtiqueta: async (cod_etiqueta: string) =>
     prisma.equipamento.findFirst({ where: { cod_etiqueta } }),
 
-  criar: (dados: any) =>
+  criar: async (dados: any) =>
     prisma.equipamento.create({
       data: dados,
       include: { tipo: true, cliente: true },
     }),
 
-  atualizar: (id: number, dados: any) =>
+  atualizar: async (id: number, dados: any) =>
     prisma.equipamento.update({
       where: { id },
       data: dados,
       include: { tipo: true, cliente: true },
     }),
 
-  desativar: (id: number) =>
+  desativar: async (id: number) =>
     prisma.equipamento.update({ where: { id }, data: { ativo: false } }),
 
-  reativar: (id: number) =>
+  reativar: async (id: number) =>
     prisma.equipamento.update({ where: { id }, data: { ativo: true } }),
 
-  listarTipos: () =>
+  listarTipos: async () =>
     prisma.tipoEquipamento.findMany({ orderBy: { nome: 'asc' } }),
 
-  buscarTipoPorNome: (nome: string) =>
+  buscarTipoPorNome: async (nome: string) =>
     prisma.tipoEquipamento.findUnique({ where: { nome } }),
 
-  criarTipo: (nome: string) =>
+  criarTipo: async (nome: string) =>
     prisma.tipoEquipamento.create({ data: { nome } }),
 }

@@ -29,21 +29,21 @@ export const servicosRepository = {
     return { dados, total, pagina, limite }
   },
 
-  buscarPorId: (id: number) =>
+  buscarPorId: async (id: number) =>
     prisma.tipoServico.findUniqueOrThrow({ where: { id } }),
 
-  buscarPorNome: (nome: string) =>
+  buscarPorNome: async (nome: string) =>
     prisma.tipoServico.findFirst({ where: { nome } }),
 
-  criar: (dados: any) =>
+  criar: async (dados: any) =>
     prisma.tipoServico.create({ data: dados }),
 
-  atualizar: (id: number, dados: any) =>
+  atualizar: async (id: number, dados: any) =>
     prisma.tipoServico.update({ where: { id }, data: dados }),
 
-  desativar: (id: number) =>
+  desativar: async (id: number) =>
     prisma.tipoServico.update({ where: { id }, data: { ativo: false } }),
 
-  reativar: (id: number) =>
+  reativar: async (id: number) =>
     prisma.tipoServico.update({ where: { id }, data: { ativo: true } }),
 }

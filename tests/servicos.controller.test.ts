@@ -35,24 +35,24 @@ test('servicos controller covers list, create, update and reactivation flows', a
   servicosService.buscarPorId = async () => ({ id: 1, nome: 'Diagnóstico' }) as any
   servicosService.criar = async () => ({ id: 2, nome: 'Manutenção' }) as any
   servicosService.atualizar = async () => ({ id: 1, nome: 'Atualizado' }) as any
-  servicosService.desativar = async () => undefined
+  ;(servicosService as any).desativar = async () => undefined
   servicosService.reativar = async () => ({ id: 1, nome: 'Diagnóstico', ativo: true }) as any
 
   const listReply = makeReply()
   const listResult = await servicosController.listar({ query: { pagina: 1, limite: 10 } } as any, listReply as any)
-  assert.equal(listResult.sucesso, true)
+  assert.equal((listResult as any).sucesso, true)
 
   const buscarReply = makeReply()
   const buscarResult = await servicosController.buscar({ params: { id: '1' } } as any, buscarReply as any)
-  assert.equal(buscarResult.sucesso, true)
+  assert.equal((buscarResult as any).sucesso, true)
 
   const criarReply = makeReply()
   const criarResult = await servicosController.criar({ body: { nome: 'Manutenção', descricao: 'desc' } } as any, criarReply as any)
-  assert.equal(criarResult.sucesso, true)
+  assert.equal((criarResult as any).sucesso, true)
 
   const atualizarReply = makeReply()
   const atualizarResult = await servicosController.atualizar({ params: { id: '1' }, body: { nome: 'Atualizado' } } as any, atualizarReply as any)
-  assert.equal(atualizarResult.sucesso, true)
+  assert.equal((atualizarResult as any).sucesso, true)
 
   const desativarReply = makeReply()
   await servicosController.desativar({ params: { id: '1' } } as any, desativarReply as any)
@@ -60,7 +60,7 @@ test('servicos controller covers list, create, update and reactivation flows', a
 
   const reativarReply = makeReply()
   const reativarResult = await servicosController.reativar({ params: { id: '1' } } as any, reativarReply as any)
-  assert.equal(reativarResult.sucesso, true)
+  assert.equal((reativarResult as any).sucesso, true)
 
   servicosService.listar = originalListar
   servicosService.buscarPorId = originalBuscarPorId

@@ -32,21 +32,21 @@ export const fornecedoresRepository = {
     return { dados, total, pagina, limite }
   },
 
-  buscarPorId: (id: number) =>
+  buscarPorId: async (id: number) =>
     prisma.fornecedor.findUniqueOrThrow({ where: { id } }),
 
-  buscarPorCnpj: (cnpj: string) =>
+  buscarPorCnpj: async (cnpj: string) =>
     prisma.fornecedor.findUnique({ where: { cnpj } }),
 
-  criar: (dados: any) =>
+  criar: async (dados: any) =>
     prisma.fornecedor.create({ data: dados }),
 
-  atualizar: (id: number, dados: any) =>
+  atualizar: async (id: number, dados: any) =>
     prisma.fornecedor.update({ where: { id }, data: dados }),
 
-  desativar: (id: number) =>
+  desativar: async (id: number) =>
     prisma.fornecedor.update({ where: { id }, data: { ativo: false } }),
 
-  reativar: (id: number) =>
+  reativar: async (id: number) =>
     prisma.fornecedor.update({ where: { id }, data: { ativo: true } }),
 }

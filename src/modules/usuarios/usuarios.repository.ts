@@ -33,34 +33,34 @@ export const usuariosRepository = {
     return { dados, total, pagina, limite }
   },
 
-  buscarPorId: (id: number) =>
+  buscarPorId: async (id: number) =>
     prisma.usuario.findUniqueOrThrow({  
       where:   { id },
       include: { perfil: true },
       omit:    { senha: true },
     }),
 
-  buscarPorEmail: (email: string) =>
+  buscarPorEmail: async (email: string) =>
     prisma.usuario.findUnique({ where: { email } }),
 
-  buscarPerfilPorId: (id: number) =>
+  buscarPerfilPorId: async (id: number) =>
     prisma.perfil.findUnique({ where: { id } }),
 
-  buscarOuCriarPerfil: (nome: Perfil) =>
+  buscarOuCriarPerfil: async (nome: Perfil) =>
     prisma.perfil.upsert({
       where: { nome },
       update: {},
       create: { nome },
     }),
 
-  criar: (dados: any) =>
+  criar: async (dados: any) =>
     prisma.usuario.create({
       data:    dados,
       include: { perfil: true },
       omit:    { senha: true },
     }),
 
-  atualizar: (id: number, dados: any) =>
+  atualizar: async (id: number, dados: any) =>
     prisma.usuario.update({
       where:   { id },
       data:    dados,
@@ -68,13 +68,13 @@ export const usuariosRepository = {
       omit:    { senha: true },
     }),
 
-  desativar: (id: number) =>
+  desativar: async (id: number) =>
     prisma.usuario.update({
       where: { id },
       data:  { ativo: false },
     }),
 
-  listarPerfis: () =>
+  listarPerfis: async () =>
     prisma.perfil.findMany({ orderBy: { nome: 'asc' } }),
 
 }

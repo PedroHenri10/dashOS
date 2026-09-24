@@ -7,7 +7,7 @@ test('usuarios repository covers list, lookup, create, update and deactivate flo
   const originalUsuario = prisma.usuario
   const originalPerfil = prisma.perfil
 
-  prisma.usuario = {
+  ;(prisma as any).usuario = {
     findMany: async (args: any) => {
       assert.ok(args.where)
       return [{ id: 1, nome_completo: 'Usuario 1', email: 'u1@email.com', perfil: { nome: 'ADMINISTRADOR' } }]
@@ -28,7 +28,7 @@ test('usuarios repository covers list, lookup, create, update and deactivate flo
     update: async (args: any) => ({ id: args.where.id, ...args.data, perfil: { nome: 'ADMINISTRADOR' } }),
   } as any
 
-  prisma.perfil = {
+  ;(prisma as any).perfil = {
     findMany: async () => [{ id: 1, nome: 'ADMINISTRADOR' }],
   } as any
 
@@ -48,6 +48,6 @@ test('usuarios repository covers list, lookup, create, update and deactivate flo
   assert.equal(disabled.id, 1)
   assert.ok(Array.isArray(perfis))
 
-  prisma.usuario = originalUsuario
-  prisma.perfil = originalPerfil
+  ;(prisma as any).usuario = originalUsuario
+  ;(prisma as any).perfil = originalPerfil
 })

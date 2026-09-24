@@ -6,7 +6,7 @@ import { clientesRepository } from '../src/modules/clientes/clientes.repository'
 test('clientes repository covers list, lookup, create, update and activate/deactivate flows', async () => {
   const originalCliente = prisma.cliente
 
-  prisma.cliente = {
+  ;(prisma as any).cliente = {
     findMany: async (args: any) => {
       assert.ok(args.where)
       return [{ id: 1, nome: 'Cliente 1', cpf_cnpj: '123', ativo: true }]
@@ -21,7 +21,7 @@ test('clientes repository covers list, lookup, create, update and activate/deact
     update: async (args: any) => ({ id: args.where.id, ...args.data }),
   } as any
 
-  const list = await clientesRepository.listar({ busca: 'Cliente', tipo: 'Pessoa Física', ativo: 'true', pagina: 1, limite: 10 })
+  const list = await clientesRepository.listar({ busca: 'Cliente', tipo: 'PF', ativo: 'true', pagina: 1, limite: 10 })
   const byId = await clientesRepository.buscarPorId(1)
   const byDoc = await clientesRepository.buscarPorCpfCnpj('123')
   const created = await clientesRepository.criar({ nome: 'Novo', cpf_cnpj: '456', tipo: 'Pessoa Física' })
@@ -37,5 +37,5 @@ test('clientes repository covers list, lookup, create, update and activate/deact
   assert.equal(disabled.id, 1)
   assert.equal(reativado.id, 1)
 
-  prisma.cliente = originalCliente
+  ;(prisma as any).cliente = originalCliente
 })
