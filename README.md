@@ -92,10 +92,12 @@ Content-Type: application/json
 
 ```json
 {
-  "email": "admin@dashos.com",
-  "senha": "admin123"
+  "email": "SEU_EMAIL",
+  "senha": "SUA_SENHA"
 }
 ```
+
+Use as credenciais do administrador configurado no seu ambiente. Não reutilize credenciais de teste em ambientes de cliente.
 
 Envie o token nas rotas protegidas:
 
