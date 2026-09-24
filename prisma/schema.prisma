@@ -96,9 +96,9 @@ model Equipamento {
   nome           String
   marca          String?
   modelo         String?
-  serie_imei     String?
+  serie_imei     String?         @unique
   cor            String?
-  cod_etiqueta   String?
+  cod_etiqueta   String?         @unique
   ativo          Boolean         @default(true)
   data_cadastro  DateTime        @default(now())
 
@@ -168,7 +168,7 @@ model OrdemServico {
 
 model TipoServico {
   id             Int             @id @default(autoincrement())
-  nome           String
+  nome           String          @unique
   descricao      String?
   preco_base     Decimal?        @db.Decimal(10, 2)
   preco_estimado Decimal?        @db.Decimal(10, 2)
