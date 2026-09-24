@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { PaginacaoSchema } from '../../shared/validation/request.schemas'
 
 export const CriarTipoServicoSchema = z.object({
   nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -9,13 +10,15 @@ export const CriarTipoServicoSchema = z.object({
   ativo: z.boolean().optional(),
 })
 
-export const AtualizarTipoServicoSchema = CriarTipoServicoSchema.partial()
+export const AtualizarTipoServicoSchema = CriarTipoServicoSchema.partial().refine(
+  (dados) => Object.keys(dados).length > 0,
+  'Informe pelo menos um campo para atualizar',
+)
 
 export const FiltroTipoServicoSchema = z.object({
   busca: z.string().optional(),
   ativo: z.enum(['true', 'false']).optional(),
-  pagina: z.coerce.number().default(1),
-  limite: z.coerce.number().default(20),
+  ...PaginacaoSchema,
 })
 
 export type CriarTipoServicoDto = z.infer<typeof CriarTipoServicoSchema>

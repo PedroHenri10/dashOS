@@ -6,6 +6,7 @@ import {
   FiltroTipoServicoSchema,
 } from './servicos.dto'
 import { ok, criado, semConteudo, paginado } from '../../shared/types/response.types'
+import { IdParamSchema } from '../../shared/validation/request.schemas'
 
 type ListarRequest = FastifyRequest<{ Querystring: unknown }>
 type BuscarRequest = FastifyRequest<{ Params: { id: string } }>
@@ -20,7 +21,8 @@ export const servicosController = {
   },
 
   async buscar(request: BuscarRequest, reply: FastifyReply) {
-    const tipoServico = await servicosService.buscarPorId(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const tipoServico = await servicosService.buscarPorId(id)
     return ok(reply, tipoServico)
   },
 
@@ -31,18 +33,21 @@ export const servicosController = {
   },
 
   async atualizar(request: AtualizarRequest, reply: FastifyReply) {
+    const { id } = IdParamSchema.parse(request.params)
     const dto = AtualizarTipoServicoSchema.parse(request.body)
-    const tipoServico = await servicosService.atualizar(Number(request.params.id), dto)
+    const tipoServico = await servicosService.atualizar(id, dto)
     return ok(reply, tipoServico)
   },
 
   async desativar(request: BuscarRequest, reply: FastifyReply) {
-    await servicosService.desativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    await servicosService.desativar(id)
     return semConteudo(reply)
   },
 
   async reativar(request: BuscarRequest, reply: FastifyReply) {
-    const tipoServico = await servicosService.reativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const tipoServico = await servicosService.reativar(id)
     return ok(reply, tipoServico, 'Tipo de serviço reativado com sucesso')
   },
 }

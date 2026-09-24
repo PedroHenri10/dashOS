@@ -7,6 +7,7 @@ import {
   CriarTipoEquipamentoSchema,
 } from './equipamentos.dto'
 import { ok, criado, semConteudo, paginado } from '../../shared/types/response.types'
+import { IdParamSchema } from '../../shared/validation/request.schemas'
 
 type ListarRequest = FastifyRequest<{ Querystring: unknown }>
 type BuscarRequest = FastifyRequest<{ Params: { id: string } }>
@@ -21,7 +22,8 @@ export const equipamentosController = {
   },
 
   async buscar(request: BuscarRequest, reply: FastifyReply) {
-    const equipamento = await equipamentosService.buscarPorId(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const equipamento = await equipamentosService.buscarPorId(id)
     return ok(reply, equipamento)
   },
 
@@ -32,18 +34,21 @@ export const equipamentosController = {
   },
 
   async atualizar(request: AtualizarRequest, reply: FastifyReply) {
+    const { id } = IdParamSchema.parse(request.params)
     const dto = AtualizarEquipamentoSchema.parse(request.body)
-    const equipamento = await equipamentosService.atualizar(Number(request.params.id), dto)
+    const equipamento = await equipamentosService.atualizar(id, dto)
     return ok(reply, equipamento)
   },
 
   async desativar(request: BuscarRequest, reply: FastifyReply) {
-    await equipamentosService.desativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    await equipamentosService.desativar(id)
     return semConteudo(reply)
   },
 
   async reativar(request: BuscarRequest, reply: FastifyReply) {
-    const equipamento = await equipamentosService.reativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const equipamento = await equipamentosService.reativar(id)
     return ok(reply, equipamento, 'Equipamento reativado com sucesso')
   },
 

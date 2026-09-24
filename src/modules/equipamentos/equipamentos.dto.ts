@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { PaginacaoSchema } from '../../shared/validation/request.schemas'
 
 export const CriarEquipamentoSchema = z.object({
   nome:         z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -11,15 +12,17 @@ export const CriarEquipamentoSchema = z.object({
   cliente_id:   z.number().int().positive('Cliente inválido'),
 })
 
-export const AtualizarEquipamentoSchema = CriarEquipamentoSchema.partial()
+export const AtualizarEquipamentoSchema = CriarEquipamentoSchema.partial().refine(
+  (dados) => Object.keys(dados).length > 0,
+  'Informe pelo menos um campo para atualizar',
+)
 
 export const FiltroEquipamentoSchema = z.object({
   busca:      z.string().optional(),
   tipo_id:    z.coerce.number().int().positive().optional(),
   cliente_id: z.coerce.number().int().positive().optional(),
   ativo:      z.enum(['true', 'false']).optional(),
-  pagina:     z.coerce.number().default(1),
-  limite:     z.coerce.number().default(20),
+  ...PaginacaoSchema,
 })
 
 export const CriarTipoEquipamentoSchema = z.object({

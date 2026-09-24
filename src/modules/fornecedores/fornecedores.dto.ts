@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { PaginacaoSchema } from '../../shared/validation/request.schemas'
 
 export const CriarFornecedorSchema = z.object({
   nome_fantasia:       z.string().min(2, 'Nome fantasia deve ter pelo menos 2 caracteres'),
@@ -17,13 +18,15 @@ export const CriarFornecedorSchema = z.object({
   cep:         z.string().optional(),
 })
 
-export const AtualizarFornecedorSchema = CriarFornecedorSchema.partial()
+export const AtualizarFornecedorSchema = CriarFornecedorSchema.partial().refine(
+  (dados) => Object.keys(dados).length > 0,
+  'Informe pelo menos um campo para atualizar',
+)
 
 export const FiltroFornecedorSchema = z.object({
   busca:  z.string().optional(),
   ativo:  z.enum(['true', 'false']).optional(),
-  pagina: z.coerce.number().default(1),
-  limite: z.coerce.number().default(20),
+  ...PaginacaoSchema,
 })
 
 export type CriarFornecedorDto     = z.infer<typeof CriarFornecedorSchema>

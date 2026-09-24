@@ -6,6 +6,7 @@ import {
   FiltroUsuarioSchema,
 } from './usuarios.dto'
 import { ok, criado, semConteudo, paginado } from '../../shared/types/response.types'
+import { IdParamSchema } from '../../shared/validation/request.schemas'
 
 type ListarRequest = FastifyRequest<{ Querystring: unknown }>
 type BuscarRequest = FastifyRequest<{ Params: { id: string } }>
@@ -20,7 +21,8 @@ export const usuariosController = {
   },
 
   async buscar(request: BuscarRequest, reply: FastifyReply) {
-    const usuario = await usuariosService.buscarPorId(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const usuario = await usuariosService.buscarPorId(id)
     return ok(reply, usuario)
   },
 
@@ -31,13 +33,15 @@ export const usuariosController = {
   },
 
   async atualizar(request: AtualizarRequest, reply: FastifyReply) {
+    const { id } = IdParamSchema.parse(request.params)
     const dto = AtualizarUsuarioSchema.parse(request.body)
-    const usuario = await usuariosService.atualizar(Number(request.params.id), dto)
+    const usuario = await usuariosService.atualizar(id, dto)
     return ok(reply, usuario)
   },
 
   async desativar(request: BuscarRequest, reply: FastifyReply) {
-    await usuariosService.desativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    await usuariosService.desativar(id)
     return semConteudo(reply)
   },
 

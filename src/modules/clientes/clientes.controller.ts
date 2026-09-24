@@ -6,6 +6,7 @@ import {
   FiltroClienteSchema,
 } from './clientes.dto'
 import { ok, criado, semConteudo, paginado } from '../../shared/types/response.types'
+import { IdParamSchema } from '../../shared/validation/request.schemas'
 
 type ListarRequest = FastifyRequest<{ Querystring: unknown }>
 type BuscarRequest = FastifyRequest<{ Params: { id: string } }>
@@ -20,7 +21,8 @@ export const clientesController = {
   },
 
   async buscar(request: BuscarRequest, reply: FastifyReply) {
-    const cliente = await clientesService.buscarPorId(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const cliente = await clientesService.buscarPorId(id)
     return ok(reply, cliente)
   },
 
@@ -31,18 +33,21 @@ export const clientesController = {
   },
 
   async atualizar(request: AtualizarRequest, reply: FastifyReply) {
+    const { id } = IdParamSchema.parse(request.params)
     const dto = AtualizarClienteSchema.parse(request.body)
-    const cliente = await clientesService.atualizar(Number(request.params.id), dto)
+    const cliente = await clientesService.atualizar(id, dto)
     return ok(reply, cliente)
   },
 
   async desativar(request: BuscarRequest, reply: FastifyReply) {
-    await clientesService.desativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    await clientesService.desativar(id)
     return semConteudo(reply)
   },
 
   async reativar(request: BuscarRequest, reply: FastifyReply) {
-    const cliente = await clientesService.reativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const cliente = await clientesService.reativar(id)
     return ok(reply, cliente, 'Cliente reativado com sucesso')
   },
 }

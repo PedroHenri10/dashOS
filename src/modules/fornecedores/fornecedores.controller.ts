@@ -6,6 +6,7 @@ import {
   FiltroFornecedorSchema,
 } from './fornecedores.dto'
 import { ok, criado, semConteudo, paginado } from '../../shared/types/response.types'
+import { IdParamSchema } from '../../shared/validation/request.schemas'
 
 type ListarRequest = FastifyRequest<{ Querystring: unknown }>
 type BuscarRequest = FastifyRequest<{ Params: { id: string } }>
@@ -20,7 +21,8 @@ export const fornecedoresController = {
   },
 
   async buscar(request: BuscarRequest, reply: FastifyReply) {
-    const fornecedor = await fornecedoresService.buscarPorId(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const fornecedor = await fornecedoresService.buscarPorId(id)
     return ok(reply, fornecedor)
   },
 
@@ -31,18 +33,21 @@ export const fornecedoresController = {
   },
 
   async atualizar(request: AtualizarRequest, reply: FastifyReply) {
+    const { id } = IdParamSchema.parse(request.params)
     const dto = AtualizarFornecedorSchema.parse(request.body)
-    const fornecedor = await fornecedoresService.atualizar(Number(request.params.id), dto)
+    const fornecedor = await fornecedoresService.atualizar(id, dto)
     return ok(reply, fornecedor)
   },
 
   async desativar(request: BuscarRequest, reply: FastifyReply) {
-    await fornecedoresService.desativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    await fornecedoresService.desativar(id)
     return semConteudo(reply)
   },
 
   async reativar(request: BuscarRequest, reply: FastifyReply) {
-    const fornecedor = await fornecedoresService.reativar(Number(request.params.id))
+    const { id } = IdParamSchema.parse(request.params)
+    const fornecedor = await fornecedoresService.reativar(id)
     return ok(reply, fornecedor, 'Fornecedor reativado com sucesso')
   },
 }
