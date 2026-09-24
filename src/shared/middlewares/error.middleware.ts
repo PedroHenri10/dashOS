@@ -45,6 +45,16 @@ export function errorHandler(
           path
         ))
     }
+
+    if (err.code === 'P2003') {
+      return reply.status(ERROR_CODES.RELACIONAMENTO_INVALIDO.status)
+        .send(buildErrorPayload(
+          ERROR_CODES.RELACIONAMENTO_INVALIDO.status,
+          ERROR_CODES.RELACIONAMENTO_INVALIDO.code,
+          ERROR_CODES.RELACIONAMENTO_INVALIDO.message,
+          path
+        ))
+    }
   }
 
   if (err instanceof ZodError || (typeof err === 'object' && err !== null && 'name' in err && err.name === 'ZodError')) {

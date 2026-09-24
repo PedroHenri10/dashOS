@@ -22,7 +22,8 @@ export const AtualizarUsuarioSchema = z.object({
 export const FiltroUsuarioSchema = z.object({
   busca: z.string().optional(),
   ativo: z.enum(['true', 'false']).optional(),
-  ...PaginacaoSchema,
+  pagina: PaginacaoSchema.pagina,
+  limite: PaginacaoSchema.limite.default(10),
 })
 
 export type CriarUsuarioDto     = z.infer<typeof CriarUsuarioSchema>

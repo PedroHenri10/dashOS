@@ -34,4 +34,12 @@ test('error middleware handles AppError and Prisma errors', async () => {
   const prismaReply = makeReply()
   errorHandler(prismaError, { url: '/x' } as any, prismaReply as any)
   assert.equal(prismaReply.getStatus(), 404)
+
+  const relationError = new Prisma.PrismaClientKnownRequestError('invalid relation', {
+    code: 'P2003',
+    clientVersion: '1.0.0',
+  })
+  const relationReply = makeReply()
+  errorHandler(relationError, { url: '/x' } as any, relationReply as any)
+  assert.equal(relationReply.getStatus(), 400)
 })
