@@ -52,7 +52,7 @@ export const authService = {
       }
 
       const usuario = await authRepository.buscarPorId(decoded.sub)
-      if (!usuario) throw new NaoAutorizadoError(ERROR_CODES.NAO_AUTORIZADO)
+      if (!usuario || !usuario.ativo) throw new TokenInvalidoError()
 
       const novoPayload = {
         sub:    usuario.id,
@@ -67,7 +67,7 @@ export const authService = {
 
   async me(userId: number) {
     const usuario = await authRepository.buscarPorId(userId)
-    if (!usuario) throw new NaoAutorizadoError(ERROR_CODES.NAO_AUTORIZADO)
+    if (!usuario || !usuario.ativo) throw new NaoAutorizadoError(ERROR_CODES.NAO_AUTORIZADO)
     return usuario
   },
 }
