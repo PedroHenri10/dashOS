@@ -58,6 +58,20 @@ test('equipamentos service validates related records and duplicate identifiers',
   )
 
   equipamentosRepository.buscarTipoPorId = async () => ({ id: 1, nome: 'Celular' }) as any
+  equipamentosRepository.buscarClientePorId = async () => ({ id: 1, nome: 'Cliente 1', ativo: false }) as any
+  await assert.rejects(
+    () => equipamentosService.criar({
+      nome: 'Cliente inativo',
+      tipo_id: 1,
+      cliente_id: 1,
+    } as any),
+    (error: unknown) => {
+      assert.equal(error?.constructor?.name, 'NaoEncontradoError')
+      assert.equal((error as any).errorCode, ERROR_CODES.CLIENTE_NAO_ENCONTRADO)
+      return true
+    },
+  )
+
   equipamentosRepository.buscarClientePorId = async () => null
   await assert.rejects(
     () => equipamentosService.criar({
@@ -72,7 +86,7 @@ test('equipamentos service validates related records and duplicate identifiers',
     },
   )
 
-  equipamentosRepository.buscarClientePorId = async () => ({ id: 1, nome: 'Cliente 1' }) as any
+  equipamentosRepository.buscarClientePorId = async () => ({ id: 1, nome: 'Cliente 1', ativo: true }) as any
   equipamentosRepository.buscarPorSerieImei = async () => ({ id: 7, serie_imei: '123' }) as any
   await assert.rejects(
     () => equipamentosService.criar({

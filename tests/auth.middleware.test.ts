@@ -75,6 +75,7 @@ test('authService.refresh should return a fresh token for valid refresh tokens',
     id: 9,
     nome_completo: 'Carlos',
     email: 'carlos@email.com',
+    ativo: true,
     perfil: { id: 1, nome: Perfil.TECNICO },
   } as any)
 

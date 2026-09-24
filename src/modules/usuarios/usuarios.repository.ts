@@ -43,6 +43,9 @@ export const usuariosRepository = {
   buscarPorEmail: (email: string) =>
     prisma.usuario.findUnique({ where: { email } }),
 
+  buscarPerfilPorId: (id: number) =>
+    prisma.perfil.findUnique({ where: { id } }),
+
   buscarOuCriarPerfil: (nome: Perfil) =>
     prisma.perfil.upsert({
       where: { nome },

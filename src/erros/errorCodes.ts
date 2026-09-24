@@ -25,6 +25,7 @@ export enum ErrorCode {
   EQUIPAMENTO_NAO_ENCONTRADO = 1015,
   TIPO_EQUIPAMENTO_NAO_ENCONTRADO = 1016,
   TIPO_EQUIPAMENTO_JA_EXISTE = 1017,
+  PERFIL_NAO_ENCONTRADO = 1018,
 }
 
 export interface ErrorDefinition {
@@ -52,4 +53,5 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   EQUIPAMENTO_NAO_ENCONTRADO: { status: 404, code: ErrorCode.EQUIPAMENTO_NAO_ENCONTRADO, message: 'Equipamento não encontrado.', domain: ErrorDomain.EQUIPMENT },
   TIPO_EQUIPAMENTO_NAO_ENCONTRADO: { status: 404, code: ErrorCode.TIPO_EQUIPAMENTO_NAO_ENCONTRADO, message: 'Tipo de equipamento não encontrado.', domain: ErrorDomain.EQUIPMENT },
   TIPO_EQUIPAMENTO_JA_EXISTE: { status: 409, code: ErrorCode.TIPO_EQUIPAMENTO_JA_EXISTE, message: 'Já existe um tipo de equipamento com esse nome.', domain: ErrorDomain.EQUIPMENT },
+  PERFIL_NAO_ENCONTRADO: { status: 404, code: ErrorCode.PERFIL_NAO_ENCONTRADO, message: 'Perfil não encontrado.', domain: ErrorDomain.USER },
 } as const

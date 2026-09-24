@@ -22,6 +22,7 @@ export const equipamentosService = {
 
     const cliente = await equipamentosRepository.buscarClientePorId(dto.cliente_id)
     if (!cliente) throw new NaoEncontradoError(ERROR_CODES.CLIENTE_NAO_ENCONTRADO)
+    if (!cliente.ativo) throw new NaoEncontradoError(ERROR_CODES.CLIENTE_NAO_ENCONTRADO)
 
     if (dto.serie_imei) {
       const existente = await equipamentosRepository.buscarPorSerieImei(dto.serie_imei)
@@ -47,6 +48,7 @@ export const equipamentosService = {
     if (dto.cliente_id) {
       const cliente = await equipamentosRepository.buscarClientePorId(dto.cliente_id)
       if (!cliente) throw new NaoEncontradoError(ERROR_CODES.CLIENTE_NAO_ENCONTRADO)
+      if (!cliente.ativo) throw new NaoEncontradoError(ERROR_CODES.CLIENTE_NAO_ENCONTRADO)
     }
 
     if (dto.serie_imei) {
