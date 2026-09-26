@@ -17,6 +17,11 @@ export const AlterarSenhaSchema = z.object({
   path: ['novaSenha'],
 })
 
+export const LogoutSchema = z.object({
+  refreshToken: z.string().min(1, 'Refresh token obrigatório'),
+})
+
 export type LoginDto   = z.infer<typeof LoginSchema>
 export type RefreshDto = z.infer<typeof RefreshSchema>
 export type AlterarSenhaDto = z.infer<typeof AlterarSenhaSchema>
+export type LogoutDto = z.infer<typeof LogoutSchema>

@@ -69,6 +69,7 @@ test('authService.login should reject invalid credentials with specific error co
 test('authService.refresh should return a fresh token for valid refresh tokens', async () => {
   setSecret()
   const originalBuscarPorId = authRepository.buscarPorId
+  const originalBuscarTokenRevogado = authRepository.buscarTokenRevogado
   const refreshToken = jwt.sign({ sub: 9 }, process.env.JWT_SECRET!, { expiresIn: '7d' })
 
   authRepository.buscarPorId = async () => ({
@@ -78,12 +79,14 @@ test('authService.refresh should return a fresh token for valid refresh tokens',
     ativo: true,
     perfil: { id: 1, nome: Perfil.TECNICO },
   } as any)
+  authRepository.buscarTokenRevogado = async () => null
 
   const result = await authService.refresh(refreshToken)
 
   assert.ok(result.token.length > 20)
 
   authRepository.buscarPorId = originalBuscarPorId
+  authRepository.buscarTokenRevogado = originalBuscarTokenRevogado
 })
 
 test('authService.refresh should reject malformed refresh payloads', async () => {

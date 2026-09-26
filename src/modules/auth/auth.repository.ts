@@ -19,4 +19,14 @@ export const authRepository = {
 
   atualizarSenha: async (id: number, senha: string) =>
     prisma.usuario.update({ where: { id }, data: { senha } }),
+
+  buscarTokenRevogado: async (token_hash: string) =>
+    prisma.tokenRevogado.findUnique({ where: { token_hash } }),
+
+  revogarToken: async (token_hash: string, expira_em: Date) =>
+    prisma.tokenRevogado.upsert({
+      where: { token_hash },
+      update: { expira_em },
+      create: { token_hash, expira_em },
+    }),
 }

@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { authService } from './auth.service'
-import { AlterarSenhaSchema, LoginSchema, RefreshSchema } from './auth.dto'
+import { AlterarSenhaSchema, LoginSchema, LogoutSchema, RefreshSchema } from './auth.dto'
 import { ok, semConteudo } from '../../shared/types/response.types'
 
 type LoginRequest = FastifyRequest<{ Body: { email: string; senha: string } }>
@@ -28,6 +28,12 @@ export const authController = {
   async alterarSenha(request: MeRequest, reply: FastifyReply) {
     const dto = AlterarSenhaSchema.parse(request.body)
     await authService.alterarSenha(request.user!.sub, dto)
+    return semConteudo(reply)
+  },
+
+  async logout(request: MeRequest, reply: FastifyReply) {
+    const { refreshToken } = LogoutSchema.parse(request.body)
+    await authService.logout(request.user!.sub, refreshToken)
     return semConteudo(reply)
   },
 }

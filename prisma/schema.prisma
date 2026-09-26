@@ -31,6 +31,13 @@ model Usuario {
   lancamentos_caixa LancamentoCaixa[]
 }
 
+model TokenRevogado {
+  id         Int      @id @default(autoincrement())
+  token_hash String   @unique
+  expira_em  DateTime
+  criado_em  DateTime @default(now())
+}
+
 model Log {
   id            Int      @id @default(autoincrement())
   modulo        String

@@ -21,7 +21,9 @@ function makeRefreshToken() {
 
 test('auth service rejects refresh and me for inactive users', async () => {
   const originalBuscarPorId = authRepository.buscarPorId
+  const originalBuscarTokenRevogado = authRepository.buscarTokenRevogado
   authRepository.buscarPorId = async () => ({ ...usuario, ativo: false }) as any
+  authRepository.buscarTokenRevogado = async () => null
 
   await assert.rejects(
     () => authService.refresh(makeRefreshToken()),
@@ -33,14 +35,18 @@ test('auth service rejects refresh and me for inactive users', async () => {
   )
 
   authRepository.buscarPorId = originalBuscarPorId
+  authRepository.buscarTokenRevogado = originalBuscarTokenRevogado
 })
 
 test('auth service refreshes tokens only for active users', async () => {
   const originalBuscarPorId = authRepository.buscarPorId
+  const originalBuscarTokenRevogado = authRepository.buscarTokenRevogado
   authRepository.buscarPorId = async () => usuario as any
+  authRepository.buscarTokenRevogado = async () => null
 
   const result = await authService.refresh(makeRefreshToken())
   assert.equal(typeof result.token, 'string')
 
   authRepository.buscarPorId = originalBuscarPorId
+  authRepository.buscarTokenRevogado = originalBuscarTokenRevogado
 })

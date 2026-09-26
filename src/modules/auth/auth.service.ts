@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { createHash } from 'node:crypto'
 import { authRepository } from './auth.repository'
 import { ERROR_CODES } from '../../erros/errorCodes'
 import { NaoAutorizadoError, TokenInvalidoError } from '../../shared/errors/AppError'
@@ -9,11 +10,15 @@ function gerarToken(payload: object, expiracao: string) {
   return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: expiracao } as any)
 }
 
-function isRefreshTokenPayload(value: unknown): value is { sub: number } {
+function isRefreshTokenPayload(value: unknown): value is { sub: number; exp?: number } {
   if (typeof value !== 'object' || value === null) return false
 
   const candidate = value as Partial<{ sub: unknown }>
   return typeof candidate.sub === 'number'
+}
+
+function hashToken(token: string) {
+  return createHash('sha256').update(token).digest('hex')
 }
 
 export const authService = {
@@ -51,6 +56,10 @@ export const authService = {
         throw new TokenInvalidoError()
       }
 
+      if (await authRepository.buscarTokenRevogado(hashToken(refreshToken))) {
+        throw new TokenInvalidoError()
+      }
+
       const usuario = await authRepository.buscarPorId(decoded.sub)
       if (!usuario || !usuario.ativo) throw new TokenInvalidoError()
 
@@ -84,5 +93,18 @@ export const authService = {
 
     const senhaHash = await bcrypt.hash(dto.novaSenha, 10)
     await authRepository.atualizarSenha(userId, senhaHash)
+  },
+
+  async logout(userId: number, refreshToken: string) {
+    try {
+      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET!)
+      if (!isRefreshTokenPayload(decoded) || decoded.sub !== userId || typeof decoded.exp !== 'number') {
+        throw new TokenInvalidoError()
+      }
+
+      await authRepository.revogarToken(hashToken(refreshToken), new Date(decoded.exp * 1000))
+    } catch {
+      throw new TokenInvalidoError()
+    }
   },
 }
