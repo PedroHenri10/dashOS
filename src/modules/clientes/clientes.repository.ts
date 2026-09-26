@@ -1,5 +1,10 @@
 import prisma from '../../shared/lib/prisma'
 import { FiltroClienteDto } from './clientes.dto'
+import { descriptografarCampo } from '../../shared/lib/field-encryption'
+
+function revelar(cliente: any) {
+  return cliente?.observacao ? { ...cliente, observacao: descriptografarCampo(cliente.observacao) } : cliente
+}
 
 export const clientesRepository = {
 
@@ -30,20 +35,17 @@ export const clientesRepository = {
       prisma.cliente.count({ where }),
     ])
 
-    return { dados, total, pagina, limite }
+    return { dados: dados.map(revelar), total, pagina, limite }
   },
 
-  buscarPorId: async (id: number) =>
-    prisma.cliente.findUniqueOrThrow({ where: { id } }),
+  buscarPorId: async (id: number) => revelar(await prisma.cliente.findUniqueOrThrow({ where: { id } })),
 
   buscarPorCpfCnpj: async (cpf_cnpj: string) =>
     prisma.cliente.findUnique({ where: { cpf_cnpj } }),
 
-  criar: async (dados: any) =>
-    prisma.cliente.create({ data: dados }),
+  criar: async (dados: any) => revelar(await prisma.cliente.create({ data: dados })),
 
-  atualizar: async (id: number, dados: any) =>
-    prisma.cliente.update({ where: { id }, data: dados }),
+  atualizar: async (id: number, dados: any) => revelar(await prisma.cliente.update({ where: { id }, data: dados })),
 
   desativar: async (id: number) =>
     prisma.cliente.update({ where: { id }, data: { ativo: false } }),

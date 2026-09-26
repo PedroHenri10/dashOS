@@ -16,11 +16,13 @@ Crie um arquivo `.env` na raiz do projeto:
 ```env
 DATABASE_URL="postgresql://usuario:senha@host/banco?sslmode=require"
 JWT_SECRET="uma-chave-secreta"
+DATA_ENCRYPTION_KEY="uma-chave-secreta-para-dados-em-repouso"
 PORT=3333
 NODE_ENV=development
 ```
 
 Não versionar o arquivo `.env`.
+`DATA_ENCRYPTION_KEY` deve ser mantida em segredo e não pode ser trocada sem um plano de migração dos dados criptografados.
 
 ## Executar localmente
 

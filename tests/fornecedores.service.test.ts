@@ -5,6 +5,8 @@ import { fornecedoresService } from '../src/modules/fornecedores/fornecedores.se
 import { ConflitoError } from '../src/shared/errors/AppError'
 import { ERROR_CODES } from '../src/erros/errorCodes'
 
+process.env.DATA_ENCRYPTION_KEY = 'test-encryption-key'
+
 test('fornecedores service validates cnpj duplication and successful creation', async () => {
   const originalBuscarPorCnpj = fornecedoresRepository.buscarPorCnpj
   const originalCriar = fornecedoresRepository.criar

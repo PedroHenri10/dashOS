@@ -2,6 +2,7 @@ import { clientesRepository } from './clientes.repository'
 import { ConflitoError } from '../../shared/errors/AppError'
 import { ERROR_CODES } from '../../erros/errorCodes'
 import { CriarClienteDto, AtualizarClienteDto, FiltroClienteDto } from './clientes.dto'
+import { criptografarCampo } from '../../shared/lib/field-encryption'
 
 export const clientesService = {
   async listar(filtros: FiltroClienteDto) {
@@ -18,7 +19,10 @@ export const clientesService = {
       if (existe) throw new ConflitoError(ERROR_CODES.CLIENTE_CPF_CNPJ_DUPLICADO)
     }
 
-    return clientesRepository.criar(dto)
+    return clientesRepository.criar({
+      ...dto,
+      ...(dto.observacao && { observacao: criptografarCampo(dto.observacao) }),
+    })
   },
 
   async atualizar(id: number, dto: AtualizarClienteDto) {
@@ -30,7 +34,10 @@ export const clientesService = {
         throw new ConflitoError(ERROR_CODES.CLIENTE_CPF_CNPJ_DUPLICADO)
     }
 
-    return clientesRepository.atualizar(id, dto)
+    return clientesRepository.atualizar(id, {
+      ...dto,
+      ...(dto.observacao && { observacao: criptografarCampo(dto.observacao) }),
+    })
   },
 
   async desativar(id: number) {

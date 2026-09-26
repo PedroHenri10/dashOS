@@ -2,6 +2,7 @@ import { fornecedoresRepository } from './fornecedores.repository'
 import { ConflitoError } from '../../shared/errors/AppError'
 import { ERROR_CODES } from '../../erros/errorCodes'
 import { CriarFornecedorDto, AtualizarFornecedorDto, FiltroFornecedorDto } from './fornecedores.dto'
+import { criptografarCampo } from '../../shared/lib/field-encryption'
 
 export const fornecedoresService = {
   async listar(filtros: FiltroFornecedorDto) {
@@ -18,7 +19,10 @@ export const fornecedoresService = {
       if (existe) throw new ConflitoError(ERROR_CODES.FORNECEDOR_CNPJ_DUPLICADO)
     }
 
-    return fornecedoresRepository.criar(dto)
+    return fornecedoresRepository.criar({
+      ...dto,
+      ...(dto.observacoes && { observacoes: criptografarCampo(dto.observacoes) }),
+    })
   },
 
   async atualizar(id: number, dto: AtualizarFornecedorDto) {
@@ -30,7 +34,10 @@ export const fornecedoresService = {
         throw new ConflitoError(ERROR_CODES.FORNECEDOR_CNPJ_DUPLICADO)
     }
 
-    return fornecedoresRepository.atualizar(id, dto)
+    return fornecedoresRepository.atualizar(id, {
+      ...dto,
+      ...(dto.observacoes && { observacoes: criptografarCampo(dto.observacoes) }),
+    })
   },
 
   async desativar(id: number) {

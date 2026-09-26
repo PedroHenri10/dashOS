@@ -5,6 +5,8 @@ import { clientesService } from '../src/modules/clientes/clientes.service'
 import { ConflitoError } from '../src/shared/errors/AppError'
 import { ERROR_CODES } from '../src/erros/errorCodes'
 
+process.env.DATA_ENCRYPTION_KEY = 'test-encryption-key'
+
 test('clientes service validates cpf/cnpj duplication and successful creation', async () => {
   const originalBuscarPorCpfCnpj = clientesRepository.buscarPorCpfCnpj
   const originalCriar = clientesRepository.criar

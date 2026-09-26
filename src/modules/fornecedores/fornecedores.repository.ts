@@ -1,5 +1,10 @@
 import prisma from '../../shared/lib/prisma'
 import { FiltroFornecedorDto } from './fornecedores.dto'
+import { descriptografarCampo } from '../../shared/lib/field-encryption'
+
+function revelar(fornecedor: any) {
+  return fornecedor?.observacoes ? { ...fornecedor, observacoes: descriptografarCampo(fornecedor.observacoes) } : fornecedor
+}
 
 export const fornecedoresRepository = {
 
@@ -29,20 +34,17 @@ export const fornecedoresRepository = {
       prisma.fornecedor.count({ where }),
     ])
 
-    return { dados, total, pagina, limite }
+    return { dados: dados.map(revelar), total, pagina, limite }
   },
 
-  buscarPorId: async (id: number) =>
-    prisma.fornecedor.findUniqueOrThrow({ where: { id } }),
+  buscarPorId: async (id: number) => revelar(await prisma.fornecedor.findUniqueOrThrow({ where: { id } })),
 
   buscarPorCnpj: async (cnpj: string) =>
     prisma.fornecedor.findUnique({ where: { cnpj } }),
 
-  criar: async (dados: any) =>
-    prisma.fornecedor.create({ data: dados }),
+  criar: async (dados: any) => revelar(await prisma.fornecedor.create({ data: dados })),
 
-  atualizar: async (id: number, dados: any) =>
-    prisma.fornecedor.update({ where: { id }, data: dados }),
+  atualizar: async (id: number, dados: any) => revelar(await prisma.fornecedor.update({ where: { id }, data: dados })),
 
   desativar: async (id: number) =>
     prisma.fornecedor.update({ where: { id }, data: { ativo: false } }),
