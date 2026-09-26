@@ -1,7 +1,9 @@
 import 'dotenv/config'
 import app from './app'
+import { carregarAmbiente } from './shared/config/environment'
 
-const PORT = Number(process.env.PORT) || 3333
+const ambiente = carregarAmbiente()
+const PORT = ambiente.PORT
 
 app.listen({ port: PORT, host: '0.0.0.0' })
   .then(() => {

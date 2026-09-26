@@ -1,12 +1,18 @@
 import 'dotenv/config'
 import prisma from './src/shared/lib/prisma'
 
+const email = process.env.ADMIN_EMAIL
+
+if (!email) {
+  throw new Error('ADMIN_EMAIL deve ser definido no ambiente')
+}
+
 async function main() {
   const user = await prisma.usuario.findUnique({
-    where: { email: 'admin@dashos.com' },
+    where: { email },
     include: { perfil: true },
   })
-  console.log(JSON.stringify(user, null, 2))
+  console.log(user ? `Usuário encontrado: ${user.email}` : 'Usuário não encontrado')
 }
 
 main()
