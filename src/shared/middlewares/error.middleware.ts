@@ -72,7 +72,11 @@ export function errorHandler(
   }
 
   const fastifyError = err as FastifyError | undefined
-  console.error('ERRO NÃO TRATADO:', fastifyError ?? err)
+  if (process.env.NODE_ENV !== 'production') {
+    console.error('ERRO NÃO TRATADO:', fastifyError ?? err)
+  } else {
+    console.error('ERRO NÃO TRATADO')
+  }
   return reply.status(ERROR_CODES.ERRO_INTERNO.status)
     .send(buildErrorPayload(
       ERROR_CODES.ERRO_INTERNO.status,
