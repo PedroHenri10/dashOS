@@ -1,6 +1,7 @@
 import fastify from 'fastify'
 import fastifyCors from '@fastify/cors'
 import fastifyHelmet from '@fastify/helmet'
+import fastifyRateLimit from '@fastify/rate-limit'
 import { errorHandler } from './shared/middlewares/error.middleware'
 import { authRoutes } from './modules/auth/auth.routes'
 import { usuariosRoutes } from './modules/usuarios/usuarios.routes'
@@ -13,6 +14,10 @@ const app = fastify({ logger: false })
 
 app.register(fastifyCors, { origin: true })
 app.register(fastifyHelmet)
+app.register(fastifyRateLimit, {
+	max: 100,
+	timeWindow: '1 hour',
+})
 
 app.get('/health', async () => ({ status: 'ok', timestamp: new Date() }))
 
