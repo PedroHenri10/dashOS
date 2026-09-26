@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { authService } from './auth.service'
-import { LoginSchema, RefreshSchema } from './auth.dto'
-import { ok } from '../../shared/types/response.types'
+import { AlterarSenhaSchema, LoginSchema, RefreshSchema } from './auth.dto'
+import { ok, semConteudo } from '../../shared/types/response.types'
 
 type LoginRequest = FastifyRequest<{ Body: { email: string; senha: string } }>
 type RefreshRequest = FastifyRequest<{ Body: { refreshToken: string } }>
@@ -23,5 +23,11 @@ export const authController = {
   async me(request: MeRequest, reply: FastifyReply) {
     const resultado = await authService.me(request.user!.sub)
     return ok(reply, resultado)
+  },
+
+  async alterarSenha(request: MeRequest, reply: FastifyReply) {
+    const dto = AlterarSenhaSchema.parse(request.body)
+    await authService.alterarSenha(request.user!.sub, dto)
+    return semConteudo(reply)
   },
 }

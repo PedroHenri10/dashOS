@@ -13,4 +13,10 @@ export const authRepository = {
       include: { perfil: true },
       omit: { senha: true }, 
     }),
+
+  buscarPorIdComSenha: async (id: number) =>
+    prisma.usuario.findUnique({ where: { id } }),
+
+  atualizarSenha: async (id: number, senha: string) =>
+    prisma.usuario.update({ where: { id }, data: { senha } }),
 }

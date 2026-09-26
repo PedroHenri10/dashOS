@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import { authRepository } from './auth.repository'
 import { ERROR_CODES } from '../../erros/errorCodes'
 import { NaoAutorizadoError, TokenInvalidoError } from '../../shared/errors/AppError'
-import { LoginDto } from './auth.dto'
+import { AlterarSenhaDto, LoginDto } from './auth.dto'
 
 function gerarToken(payload: object, expiracao: string) {
   return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: expiracao } as any)
@@ -69,5 +69,20 @@ export const authService = {
     const usuario = await authRepository.buscarPorId(userId)
     if (!usuario || !usuario.ativo) throw new NaoAutorizadoError(ERROR_CODES.NAO_AUTORIZADO)
     return usuario
+  },
+
+  async alterarSenha(userId: number, dto: AlterarSenhaDto) {
+    const usuario = await authRepository.buscarPorIdComSenha(userId)
+    if (!usuario || !usuario.ativo) {
+      throw new NaoAutorizadoError(ERROR_CODES.NAO_AUTORIZADO)
+    }
+
+    const senhaCorreta = await bcrypt.compare(dto.senhaAtual, usuario.senha)
+    if (!senhaCorreta) {
+      throw new NaoAutorizadoError(ERROR_CODES.CREDENCIAIS_INVALIDAS)
+    }
+
+    const senhaHash = await bcrypt.hash(dto.novaSenha, 10)
+    await authRepository.atualizarSenha(userId, senhaHash)
   },
 }
