@@ -2,12 +2,12 @@ import { z } from 'zod'
 import { PaginacaoSchema } from '../../shared/validation/request.schemas'
 
 export const CriarFornecedorSchema = z.object({
-  nome_fantasia:       z.string().min(2, 'Nome fantasia deve ter pelo menos 2 caracteres'),
-  cnpj:                z.string().optional(),
-  telefone:            z.string().optional(),
+  nome_fantasia:       z.string().trim().min(2).max(120, 'Nome fantasia muito longo'),
+  cnpj:                z.string().trim().max(18, 'CNPJ inválido').optional(),
+  telefone:            z.string().trim().max(20, 'Telefone inválido').optional(),
   email:               z.string().email('E-mail inválido').optional().or(z.literal('')),
   contato_responsavel: z.string().optional(),
-  observacoes:         z.string().optional(),
+  observacoes:         z.string().max(1000, 'Observações muito longas').optional(),
 
   logradouro:  z.string().optional(),
   numero:      z.string().optional(),

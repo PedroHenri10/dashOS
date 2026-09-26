@@ -2,13 +2,13 @@ import { z } from 'zod'
 import { PaginacaoSchema } from '../../shared/validation/request.schemas'
 
 export const CriarClienteSchema = z.object({
-  nome:      z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+  nome:      z.string().trim().min(2).max(120, 'Nome muito longo'),
   tipo: z.enum(['PF', 'PJ'], { message: 'Tipo deve ser PF ou PJ' }),
-  cpf_cnpj:  z.string().optional(),
-  telefone_1: z.string().min(8, 'Telefone inválido'),
-  telefone_2: z.string().optional(),
+  cpf_cnpj:  z.string().trim().max(18, 'Documento inválido').optional(),
+  telefone_1: z.string().trim().min(8, 'Telefone inválido').max(20, 'Telefone inválido'),
+  telefone_2: z.string().trim().max(20, 'Telefone inválido').optional(),
   email:     z.string().email('E-mail inválido').optional().or(z.literal('')),
-  observacao: z.string().optional(),
+  observacao: z.string().max(1000, 'Observação muito longa').optional(),
 
   logradouro:  z.string().optional(),
   numero:      z.string().optional(),

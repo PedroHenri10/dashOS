@@ -2,12 +2,12 @@ import { z } from 'zod'
 import { PaginacaoSchema } from '../../shared/validation/request.schemas'
 
 export const CriarEquipamentoSchema = z.object({
-  nome:         z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  marca:        z.string().optional(),
-  modelo:       z.string().optional(),
-  serie_imei:   z.string().optional(),
-  cor:          z.string().optional(),
-  cod_etiqueta: z.string().optional(),
+  nome:         z.string().trim().min(2).max(120, 'Nome muito longo'),
+  marca:        z.string().trim().max(80, 'Marca muito longa').optional(),
+  modelo:       z.string().trim().max(80, 'Modelo muito longo').optional(),
+  serie_imei:   z.string().trim().max(40, 'Série/IMEI inválido').optional(),
+  cor:          z.string().trim().max(40, 'Cor muito longa').optional(),
+  cod_etiqueta: z.string().trim().max(40, 'Código de etiqueta inválido').optional(),
   tipo_id:      z.number().int().positive('Tipo de equipamento inválido'),
   cliente_id:   z.number().int().positive('Cliente inválido'),
 })
