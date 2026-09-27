@@ -20,8 +20,12 @@ export const usuariosService = {
     if (emailEmUso) throw new ConflitoError(ERROR_CODES.EMAIL_JA_CADASTRADO)
 
     const senhaHash = await bcrypt.hash(dto.senha, 10)
-    if (dto.perfil_id && !(await usuariosRepository.buscarPerfilPorId(dto.perfil_id))) {
-      throw new NaoEncontradoError(ERROR_CODES.PERFIL_NAO_ENCONTRADO)
+    if (dto.perfil_id) {
+      const perfil = await usuariosRepository.buscarPerfilPorId(dto.perfil_id)
+      if (!perfil) throw new NaoEncontradoError(ERROR_CODES.PERFIL_NAO_ENCONTRADO)
+      if (!Object.values(Perfil).includes(perfil.nome as Perfil)) {
+        throw new NaoEncontradoError(ERROR_CODES.PERFIL_NAO_PERMITIDO)
+      }
     }
     const perfil_id = dto.perfil_id ?? (await usuariosRepository.buscarOuCriarPerfil(Perfil.TECNICO)).id
 
@@ -36,8 +40,12 @@ export const usuariosService = {
       if (emailEmUso && emailEmUso.id !== id) throw new ConflitoError(ERROR_CODES.EMAIL_JA_CADASTRADO)
     }
 
-    if (dto.perfil_id && !(await usuariosRepository.buscarPerfilPorId(dto.perfil_id))) {
-      throw new NaoEncontradoError(ERROR_CODES.PERFIL_NAO_ENCONTRADO)
+    if (dto.perfil_id) {
+      const perfil = await usuariosRepository.buscarPerfilPorId(dto.perfil_id)
+      if (!perfil) throw new NaoEncontradoError(ERROR_CODES.PERFIL_NAO_ENCONTRADO)
+      if (!Object.values(Perfil).includes(perfil.nome as Perfil)) {
+        throw new NaoEncontradoError(ERROR_CODES.PERFIL_NAO_PERMITIDO)
+      }
     }
 
     return usuariosRepository.atualizar(id, dto)

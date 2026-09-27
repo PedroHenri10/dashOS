@@ -27,6 +27,7 @@ export enum ErrorCode {
   TIPO_EQUIPAMENTO_JA_EXISTE = 1017,
   PERFIL_NAO_ENCONTRADO = 1018,
   RELACIONAMENTO_INVALIDO = 1019,
+  PERFIL_NAO_PERMITIDO = 1020,
 }
 
 export interface ErrorDefinition {
@@ -56,4 +57,5 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   TIPO_EQUIPAMENTO_JA_EXISTE: { status: 409, code: ErrorCode.TIPO_EQUIPAMENTO_JA_EXISTE, message: 'Já existe um tipo de equipamento com esse nome.', domain: ErrorDomain.EQUIPMENT },
   PERFIL_NAO_ENCONTRADO: { status: 404, code: ErrorCode.PERFIL_NAO_ENCONTRADO, message: 'Perfil não encontrado.', domain: ErrorDomain.USER },
   RELACIONAMENTO_INVALIDO: { status: 400, code: ErrorCode.RELACIONAMENTO_INVALIDO, message: 'Relacionamento inválido.', domain: ErrorDomain.SYSTEM },
+  PERFIL_NAO_PERMITIDO: { status: 422, code: ErrorCode.PERFIL_NAO_PERMITIDO, message: 'Perfil não permitido.', domain: ErrorDomain.USER },
 } as const

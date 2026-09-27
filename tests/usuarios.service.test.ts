@@ -110,3 +110,28 @@ test('usuarios service validates profile and duplicate email on update', async (
   usuariosRepository.buscarPerfilPorId = originalBuscarPerfilPorId
   usuariosRepository.atualizar = originalAtualizar
 })
+
+test('usuarios service rejects profiles that exist but are outside the enum', async () => {
+  const originalBuscarPorEmail = usuariosRepository.buscarPorEmail
+  const originalBuscarPerfilPorId = usuariosRepository.buscarPerfilPorId
+
+  usuariosRepository.buscarPorEmail = async () => null
+  usuariosRepository.buscarPerfilPorId = async () => ({ id: 3, nome: 'Atendente' }) as any
+
+  await assert.rejects(
+    () => usuariosService.criar({
+      nome_completo: 'Perfil Não Permitido',
+      email: 'perfil@teste.com',
+      senha: '123456',
+      perfil_id: 3,
+    }),
+    (error: unknown) => {
+      assert.equal(error?.constructor?.name, 'NaoEncontradoError')
+      assert.equal((error as any).errorCode, ERROR_CODES.PERFIL_NAO_PERMITIDO)
+      return true
+    },
+  )
+
+  usuariosRepository.buscarPorEmail = originalBuscarPorEmail
+  usuariosRepository.buscarPerfilPorId = originalBuscarPerfilPorId
+})
