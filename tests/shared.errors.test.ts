@@ -46,4 +46,8 @@ test('error middleware handles AppError and Prisma errors', async () => {
   const rateLimitReply = makeReply()
   errorHandler({ statusCode: 429, message: 'Rate limit exceeded' }, { url: '/auth/login' } as any, rateLimitReply as any)
   assert.equal(rateLimitReply.getStatus(), 429)
+
+  const malformedJsonReply = makeReply()
+  errorHandler({ statusCode: 400, message: 'Unexpected end of JSON input' }, { url: '/auth/login' } as any, malformedJsonReply as any)
+  assert.equal(malformedJsonReply.getStatus(), 400)
 })
