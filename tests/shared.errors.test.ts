@@ -42,4 +42,8 @@ test('error middleware handles AppError and Prisma errors', async () => {
   const relationReply = makeReply()
   errorHandler(relationError, { url: '/x' } as any, relationReply as any)
   assert.equal(relationReply.getStatus(), 400)
+
+  const rateLimitReply = makeReply()
+  errorHandler({ statusCode: 429, message: 'Rate limit exceeded' }, { url: '/auth/login' } as any, rateLimitReply as any)
+  assert.equal(rateLimitReply.getStatus(), 429)
 })

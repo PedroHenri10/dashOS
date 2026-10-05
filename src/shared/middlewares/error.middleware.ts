@@ -72,6 +72,16 @@ export function errorHandler(
   }
 
   const fastifyError = err as FastifyError | undefined
+  if (fastifyError?.statusCode === 429) {
+    return reply.status(ERROR_CODES.RATE_LIMIT_EXCEDIDO.status)
+      .send(buildErrorPayload(
+        ERROR_CODES.RATE_LIMIT_EXCEDIDO.status,
+        ERROR_CODES.RATE_LIMIT_EXCEDIDO.code,
+        ERROR_CODES.RATE_LIMIT_EXCEDIDO.message,
+        path
+      ))
+  }
+
   if (process.env.NODE_ENV !== 'production') {
     console.error('ERRO NÃO TRATADO:', fastifyError ?? err)
   } else {
