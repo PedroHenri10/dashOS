@@ -258,6 +258,7 @@ model Produto {
   categoria        String?
   preco_custo      Decimal? @db.Decimal(10, 2)
   preco_venda      Decimal? @db.Decimal(10, 2)
+  estoque_minimo   Int      @default(0)
   estoque_atual    Int      @default(0)
   data_criacao     DateTime @default(now())
   data_atualizacao DateTime @updatedAt
