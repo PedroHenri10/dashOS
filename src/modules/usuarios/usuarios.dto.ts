@@ -20,7 +20,7 @@ export const AtualizarUsuarioSchema = z.object({
 )
 
 export const FiltroUsuarioSchema = z.object({
-  busca: z.string().optional(),
+  busca: z.string().trim().max(120, 'Busca muito longa').optional(),
   ativo: z.enum(['true', 'false']).optional(),
   pagina: PaginacaoSchema.pagina,
   limite: PaginacaoSchema.limite.default(10),

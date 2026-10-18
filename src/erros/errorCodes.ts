@@ -28,6 +28,7 @@ export enum ErrorCode {
   PERFIL_NAO_ENCONTRADO = 1018,
   RELACIONAMENTO_INVALIDO = 1019,
   PERFIL_NAO_PERMITIDO = 1020,
+  RATE_LIMIT_EXCEDIDO = 1021,
 }
 
 export interface ErrorDefinition {
@@ -58,4 +59,5 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   PERFIL_NAO_ENCONTRADO: { status: 404, code: ErrorCode.PERFIL_NAO_ENCONTRADO, message: 'Perfil não encontrado.', domain: ErrorDomain.USER },
   RELACIONAMENTO_INVALIDO: { status: 400, code: ErrorCode.RELACIONAMENTO_INVALIDO, message: 'Relacionamento inválido.', domain: ErrorDomain.SYSTEM },
   PERFIL_NAO_PERMITIDO: { status: 422, code: ErrorCode.PERFIL_NAO_PERMITIDO, message: 'Perfil não permitido.', domain: ErrorDomain.USER },
+  RATE_LIMIT_EXCEDIDO: { status: 429, code: ErrorCode.RATE_LIMIT_EXCEDIDO, message: 'Muitas requisições. Tente novamente mais tarde.', domain: ErrorDomain.SYSTEM },
 } as const

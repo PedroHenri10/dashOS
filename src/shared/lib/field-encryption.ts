@@ -1,4 +1,4 @@
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto'
+import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes } from 'node:crypto'
 
 const PREFIX = 'enc:v1:'
 
@@ -26,3 +26,14 @@ export function descriptografarCampo(value: string) {
     decipher.final(),
   ]).toString('utf8')
 }
+
+/**
+ * Gera um hash cego determinístico (HMAC-SHA256) de um identificador (ex: CPF/CNPJ normalizado)
+ * para viabilizar buscas exatas O(1) e índices únicos sem expor o dado em texto claro.
+ */
+export function gerarHashBusca(value: string): string {
+  const limpo = value.replace(/\D/g, '').trim().toLowerCase()
+  const secret = process.env.DATA_ENCRYPTION_KEY || 'dashos-blind-index-default-key-32'
+  const hmacKey = createHash('sha256').update(`${secret}:blind-index`).digest()
+  return createHmac('sha256', hmacKey).update(limpo).digest('hex')
+}

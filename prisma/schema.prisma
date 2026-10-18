@@ -57,6 +57,7 @@ model Cliente {
   nome             String
   tipo             String
   cpf_cnpj         String?   @unique
+  cpf_cnpj_hash    String?   @unique
   telefone_1       String?
   telefone_2       String?
   email            String?
@@ -178,7 +179,7 @@ model TipoServico {
   nome           String          @unique
   descricao      String?
   preco_base     Decimal?        @db.Decimal(10, 2)
-  preco_estimado Decimal?        @db.Decimal(10, 2)
+  prazo_estimado DateTime?       @db.Date
   dias_garantia  Int?
   ativo          Boolean         @default(true)
   data_criacao   DateTime        @default(now())
@@ -258,6 +259,7 @@ model Produto {
   categoria        String?
   preco_custo      Decimal? @db.Decimal(10, 2)
   preco_venda      Decimal? @db.Decimal(10, 2)
+  estoque_minimo   Int      @default(0)
   estoque_atual    Int      @default(0)
   data_criacao     DateTime @default(now())
   data_atualizacao DateTime @updatedAt
@@ -355,7 +357,6 @@ model ProdutoVenda {
   quantidade  Int
   valor_uni   Decimal  @db.Decimal(10, 2)
   valor_total Decimal? @db.Decimal(10, 2)
-  descricao   String?
 
   venda_id Int
   venda    Venda @relation(fields: [venda_id], references: [id])

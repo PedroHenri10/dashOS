@@ -48,3 +48,14 @@ export class TokenInvalidoError extends AppError {
     super(errorCode)
   }
 }
+
+export class DadosInvalidosError extends AppError {
+  constructor(mensagemCustomizada?: string) {
+    super(
+      mensagemCustomizada
+        ? { ...ERROR_CODES.DADOS_INVALIDOS, message: mensagemCustomizada }
+        : ERROR_CODES.DADOS_INVALIDOS,
+    )
+  }
+}
+

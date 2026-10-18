@@ -1,9 +1,15 @@
 import prisma from '../../shared/lib/prisma'
 import { FiltroClienteDto } from './clientes.dto'
-import { descriptografarCampo } from '../../shared/lib/field-encryption'
+import { descriptografarCampo, gerarHashBusca } from '../../shared/lib/field-encryption'
+import { limparDocumento } from '../../util'
 
 function revelar(cliente: any) {
-  return cliente?.observacao ? { ...cliente, observacao: descriptografarCampo(cliente.observacao) } : cliente
+  if (!cliente) return cliente
+  return {
+    ...cliente,
+    ...(cliente.observacao && { observacao: descriptografarCampo(cliente.observacao) }),
+    ...(cliente.cpf_cnpj && { cpf_cnpj: descriptografarCampo(cliente.cpf_cnpj) }),
+  }
 }
 
 export const clientesRepository = {
@@ -12,13 +18,16 @@ export const clientesRepository = {
     const { busca, tipo, ativo, pagina, limite } = filtros
     const skip = (pagina - 1) * limite
 
+    const limpoBusca = busca ? limparDocumento(busca) : ''
+    const hashBusca = limpoBusca.length >= 11 ? gerarHashBusca(limpoBusca) : undefined
+
     const where = {
       ...(busca && {
         OR: [
-          { nome:      { contains: busca, mode: 'insensitive' as const } },
-          { cpf_cnpj:  { contains: busca } },
-          { telefone_1:{ contains: busca } },
-          { email:     { contains: busca, mode: 'insensitive' as const } },
+          { nome:       { contains: busca, mode: 'insensitive' as const } },
+          ...(hashBusca ? [{ cpf_cnpj_hash: hashBusca }] : [{ cpf_cnpj: { contains: busca } }]),
+          { telefone_1: { contains: busca } },
+          { email:      { contains: busca, mode: 'insensitive' as const } },
         ],
       }),
       ...(tipo  && { tipo }),
@@ -40,8 +49,21 @@ export const clientesRepository = {
 
   buscarPorId: async (id: number) => revelar(await prisma.cliente.findUniqueOrThrow({ where: { id } })),
 
-  buscarPorCpfCnpj: async (cpf_cnpj: string) =>
-    prisma.cliente.findUnique({ where: { cpf_cnpj } }),
+  buscarPorCpfCnpj: async (cpf_cnpj: string) => {
+    const limpo = limparDocumento(cpf_cnpj)
+    const hash = gerarHashBusca(limpo)
+    const where = {
+      OR: [
+        { cpf_cnpj_hash: hash },
+        { cpf_cnpj: limpo },
+        { cpf_cnpj },
+      ],
+    }
+    const cliente = typeof prisma.cliente.findFirst === 'function'
+      ? await prisma.cliente.findFirst({ where })
+      : await prisma.cliente.findUnique({ where: { cpf_cnpj } } as any)
+    return revelar(cliente)
+  },
 
   criar: async (dados: any) => revelar(await prisma.cliente.create({ data: dados })),
 

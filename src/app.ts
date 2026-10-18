@@ -11,8 +11,14 @@ import { equipamentosRoutes } from './modules/equipamentos/equipamentos.routes'
 import { servicosRoutes } from './modules/servicos/servicos.routes'
 
 const app = fastify({ logger: false })
+const corsOrigins = (process.env.CORS_ORIGINS ?? 'http://localhost:3000,http://localhost:5173')
+	.split(',')
+	.map((origin) => origin.trim())
+	.filter(Boolean)
 
-app.register(fastifyCors, { origin: true })
+app.register(fastifyCors, {
+	origin: (origin, callback) => callback(null, !origin || corsOrigins.includes(origin)),
+})
 app.register(fastifyHelmet)
 app.register(fastifyRateLimit, {
 	max: 100,

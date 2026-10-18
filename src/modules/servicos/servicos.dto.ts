@@ -5,7 +5,7 @@ export const CriarTipoServicoSchema = z.object({
   nome: z.string().trim().min(2).max(120, 'Nome muito longo'),
   descricao: z.string().max(1000, 'Descrição muito longa').optional(),
   preco_base: z.coerce.number().nonnegative('Preço base inválido').optional(),
-  preco_estimado: z.coerce.number().nonnegative('Preço estimado inválido').optional(),
+  prazo_estimado: z.coerce.date().optional(),
   dias_garantia: z.coerce.number().int().nonnegative('Dias de garantia inválidos').optional(),
   ativo: z.boolean().optional(),
 })
