@@ -4,6 +4,7 @@ export enum ErrorDomain {
   CLIENT = 'CLIENT',
   SUPPLIER = 'SUPPLIER',
   EQUIPMENT = 'EQUIPMENT',
+  ORDER = 'ORDER',
   SYSTEM = 'SYSTEM',
 }
 
@@ -29,6 +30,9 @@ export enum ErrorCode {
   RELACIONAMENTO_INVALIDO = 1019,
   PERFIL_NAO_PERMITIDO = 1020,
   RATE_LIMIT_EXCEDIDO = 1021,
+  ORDEM_SERVICO_NAO_ENCONTRADA = 1022,
+  CONFIGURACAO_OS_AUSENTE = 1023,
+  EQUIPAMENTO_NAO_PERTENCE_AO_CLIENTE = 1024,
 }
 
 export interface ErrorDefinition {
@@ -60,4 +64,7 @@ export const ERROR_CODES: Record<string, ErrorDefinition> = {
   RELACIONAMENTO_INVALIDO: { status: 400, code: ErrorCode.RELACIONAMENTO_INVALIDO, message: 'Relacionamento inválido.', domain: ErrorDomain.SYSTEM },
   PERFIL_NAO_PERMITIDO: { status: 422, code: ErrorCode.PERFIL_NAO_PERMITIDO, message: 'Perfil não permitido.', domain: ErrorDomain.USER },
   RATE_LIMIT_EXCEDIDO: { status: 429, code: ErrorCode.RATE_LIMIT_EXCEDIDO, message: 'Muitas requisições. Tente novamente mais tarde.', domain: ErrorDomain.SYSTEM },
+  ORDEM_SERVICO_NAO_ENCONTRADA: { status: 404, code: ErrorCode.ORDEM_SERVICO_NAO_ENCONTRADA, message: 'Ordem de serviço não encontrada.', domain: ErrorDomain.ORDER },
+  CONFIGURACAO_OS_AUSENTE: { status: 500, code: ErrorCode.CONFIGURACAO_OS_AUSENTE, message: 'Configuração de tipo/status de OS ausente. Aplique as migrations.', domain: ErrorDomain.ORDER },
+  EQUIPAMENTO_NAO_PERTENCE_AO_CLIENTE: { status: 422, code: ErrorCode.EQUIPAMENTO_NAO_PERTENCE_AO_CLIENTE, message: 'O equipamento não pertence ao cliente informado.', domain: ErrorDomain.ORDER },
 } as const
