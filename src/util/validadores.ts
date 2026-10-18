@@ -205,3 +205,4 @@ export function mascararDocumento(documento: string | null | undefined): string 
   }
   return documento
 }
+
