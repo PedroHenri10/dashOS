@@ -19,17 +19,19 @@ test('servicos repository covers list, lookup, create, update and activate/deact
 
   const list = await servicosRepository.listar({ busca: 'Diagnóstico', ativo: 'true', pagina: 1, limite: 10 })
   const byId = await servicosRepository.buscarPorId(1)
-  const created = await servicosRepository.criar({ nome: 'Manutenção', descricao: 'desc', prazo_estimado: 24 })
-  const updated = await servicosRepository.atualizar(1, { nome: 'Atualizado', prazo_estimado: 48 })
+  const dataPrazo = new Date('2026-12-31')
+  const dataPrazoAtualizado = new Date('2027-01-15')
+  const created = await servicosRepository.criar({ nome: 'Manutenção', descricao: 'desc', prazo_estimado: dataPrazo })
+  const updated = await servicosRepository.atualizar(1, { nome: 'Atualizado', prazo_estimado: dataPrazoAtualizado })
   const disabled = await servicosRepository.desativar(1)
   const reactivated = await servicosRepository.reativar(1)
 
   assert.equal(list.total, 1)
   assert.equal(byId.id, 1)
   assert.equal(created.id, 12)
-  assert.equal(created.prazo_estimado, 24)
+  assert.equal(created.prazo_estimado, dataPrazo)
   assert.equal(updated.id, 1)
-  assert.equal(updated.prazo_estimado, 48)
+  assert.equal(updated.prazo_estimado, dataPrazoAtualizado)
   assert.equal(disabled.id, 1)
   assert.equal(reactivated.id, 1)
 

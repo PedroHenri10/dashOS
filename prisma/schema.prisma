@@ -178,7 +178,7 @@ model TipoServico {
   nome           String          @unique
   descricao      String?
   preco_base     Decimal?        @db.Decimal(10, 2)
-  prazo_estimado Decimal?        @db.Decimal(10, 2)
+  prazo_estimado DateTime?       @db.Date
   dias_garantia  Int?
   ativo          Boolean         @default(true)
   data_criacao   DateTime        @default(now())

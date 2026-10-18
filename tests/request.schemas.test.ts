@@ -42,14 +42,17 @@ test('input schemas reject oversized values and short login passwords', () => {
   assert.throws(() => FiltroUsuarioSchema.parse({ busca: 'a'.repeat(5000) }))
 })
 
-test('tipo servico schemas handle prazo_estimado field and reject negative values', () => {
-  const parsed = CriarTipoServicoSchema.parse({ nome: 'Formatação', prazo_estimado: '24' })
-  assert.equal(parsed.prazo_estimado, 24)
+test('tipo servico schemas handle prazo_estimado field as date and reject invalid date values', () => {
+  const parsed = CriarTipoServicoSchema.parse({ nome: 'Formatação', prazo_estimado: '2026-12-31' })
+  assert.ok(parsed.prazo_estimado instanceof Date)
+  assert.equal(parsed.prazo_estimado.toISOString().slice(0, 10), '2026-12-31')
 
-  const updated = AtualizarTipoServicoSchema.parse({ prazo_estimado: 48 })
-  assert.equal(updated.prazo_estimado, 48)
+  const targetDate = new Date('2027-01-15T00:00:00.000Z')
+  const updated = AtualizarTipoServicoSchema.parse({ prazo_estimado: targetDate })
+  assert.ok(updated.prazo_estimado instanceof Date)
+  assert.equal(updated.prazo_estimado.toISOString().slice(0, 10), '2027-01-15')
 
-  assert.throws(() => CriarTipoServicoSchema.parse({ nome: 'Formatação', prazo_estimado: -1 }))
-  assert.throws(() => AtualizarTipoServicoSchema.parse({ prazo_estimado: -10 }))
+  assert.throws(() => CriarTipoServicoSchema.parse({ nome: 'Formatação', prazo_estimado: 'data-invalida' }))
+  assert.throws(() => AtualizarTipoServicoSchema.parse({ prazo_estimado: 'data-invalida' }))
 })
 
