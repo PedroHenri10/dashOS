@@ -4,7 +4,7 @@ import { IdParamSchema, PaginacaoSchema } from '../src/shared/validation/request
 import { AtualizarClienteSchema } from '../src/modules/clientes/clientes.dto'
 import { AtualizarFornecedorSchema } from '../src/modules/fornecedores/fornecedores.dto'
 import { AtualizarEquipamentoSchema } from '../src/modules/equipamentos/equipamentos.dto'
-import { AtualizarTipoServicoSchema } from '../src/modules/servicos/servicos.dto'
+import { AtualizarTipoServicoSchema, CriarTipoServicoSchema } from '../src/modules/servicos/servicos.dto'
 import { AtualizarUsuarioSchema } from '../src/modules/usuarios/usuarios.dto'
 import { LoginSchema } from '../src/modules/auth/auth.dto'
 import { FiltroUsuarioSchema } from '../src/modules/usuarios/usuarios.dto'
@@ -41,3 +41,15 @@ test('input schemas reject oversized values and short login passwords', () => {
   assert.throws(() => AtualizarTipoServicoSchema.parse({ descricao: 'a'.repeat(1001) }))
   assert.throws(() => FiltroUsuarioSchema.parse({ busca: 'a'.repeat(5000) }))
 })
+
+test('tipo servico schemas handle prazo_estimado field and reject negative values', () => {
+  const parsed = CriarTipoServicoSchema.parse({ nome: 'Formatação', prazo_estimado: '24' })
+  assert.equal(parsed.prazo_estimado, 24)
+
+  const updated = AtualizarTipoServicoSchema.parse({ prazo_estimado: 48 })
+  assert.equal(updated.prazo_estimado, 48)
+
+  assert.throws(() => CriarTipoServicoSchema.parse({ nome: 'Formatação', prazo_estimado: -1 }))
+  assert.throws(() => AtualizarTipoServicoSchema.parse({ prazo_estimado: -10 }))
+})
+
