@@ -57,6 +57,7 @@ model Cliente {
   nome             String
   tipo             String
   cpf_cnpj         String?   @unique
+  cpf_cnpj_hash    String?   @unique
   telefone_1       String?
   telefone_2       String?
   email            String?

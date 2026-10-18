@@ -7,6 +7,7 @@ import {
 } from './clientes.dto'
 import { ok, criado, semConteudo, paginado } from '../../shared/types/response.types'
 import { IdParamSchema } from '../../shared/validation/request.schemas'
+import { mascararDocumento } from '../../util'
 
 type ListarRequest = FastifyRequest<{ Querystring: unknown }>
 type BuscarRequest = FastifyRequest<{ Params: { id: string } }>
@@ -17,7 +18,11 @@ export const clientesController = {
   async listar(request: ListarRequest, reply: FastifyReply) {
     const filtros = FiltroClienteSchema.parse(request.query)
     const { dados, total, pagina, limite } = await clientesService.listar(filtros)
-    return paginado(reply, dados, { total, pagina, limite })
+    const dadosMascarados = dados.map((cliente: any) => ({
+      ...cliente,
+      cpf_cnpj: cliente.cpf_cnpj ? mascararDocumento(cliente.cpf_cnpj) : cliente.cpf_cnpj,
+    }))
+    return paginado(reply, dadosMascarados, { total, pagina, limite })
   },
 
   async buscar(request: BuscarRequest, reply: FastifyReply) {
