@@ -1,9 +1,10 @@
 import { z } from 'zod'
 import { PaginacaoSchema } from '../../shared/validation/request.schemas'
+import { validarCNPJ } from '../../util'
 
 export const CriarFornecedorSchema = z.object({
   nome_fantasia:       z.string().trim().min(2).max(120, 'Nome fantasia muito longo'),
-  cnpj:                z.string().trim().max(18, 'CNPJ inválido').optional(),
+  cnpj:                z.string().trim().max(18, 'CNPJ inválido').refine((val) => !val || validarCNPJ(val), 'CNPJ inválido').optional(),
   telefone:            z.string().trim().max(20, 'Telefone inválido').optional(),
   email:               z.string().email('E-mail inválido').optional().or(z.literal('')),
   contato_responsavel: z.string().optional(),
