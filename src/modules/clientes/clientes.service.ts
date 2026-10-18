@@ -1,9 +1,9 @@
 import { clientesRepository } from './clientes.repository'
-import { ConflitoError } from '../../shared/errors/AppError'
+import { ConflitoError, DadosInvalidosError } from '../../shared/errors/AppError'
 import { ERROR_CODES } from '../../erros/errorCodes'
 import { CriarClienteDto, AtualizarClienteDto, FiltroClienteDto } from './clientes.dto'
 import { criptografarCampo, gerarHashBusca } from '../../shared/lib/field-encryption'
-import { limparDocumento } from '../../util'
+import { limparDocumento, validarCpfCnpj } from '../../util'
 
 export const clientesService = {
   async listar(filtros: FiltroClienteDto) {
@@ -15,6 +15,12 @@ export const clientesService = {
   },
 
   async criar(dto: CriarClienteDto) {
+    if (dto.cpf_cnpj) {
+      if (!validarCpfCnpj(dto.cpf_cnpj, dto.tipo)) {
+        throw new DadosInvalidosError('Documento informado é inválido.')
+      }
+    }
+
     const limpoDoc = dto.cpf_cnpj ? limparDocumento(dto.cpf_cnpj) : undefined
 
     if (limpoDoc) {
@@ -34,6 +40,12 @@ export const clientesService = {
 
   async atualizar(id: number, dto: AtualizarClienteDto) {
     await clientesRepository.buscarPorId(id)
+
+    if (dto.cpf_cnpj) {
+      if (!validarCpfCnpj(dto.cpf_cnpj, dto.tipo)) {
+        throw new DadosInvalidosError('Documento informado é inválido.')
+      }
+    }
 
     const limpoDoc = dto.cpf_cnpj ? limparDocumento(dto.cpf_cnpj) : undefined
 
