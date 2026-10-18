@@ -356,7 +356,6 @@ model ProdutoVenda {
   quantidade  Int
   valor_uni   Decimal  @db.Decimal(10, 2)
   valor_total Decimal? @db.Decimal(10, 2)
-  descricao   String?
 
   venda_id Int
   venda    Venda @relation(fields: [venda_id], references: [id])
