@@ -221,6 +221,25 @@ Filtros disponíveis em `GET /servicos`:
 busca, ativo=true|false, pagina, limite
 ```
 
+### Ordens de Serviço
+
+Todas as rotas exigem autenticação e aceitam Técnico e Administrador com acesso igual.
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| POST | `/ordens-servico/orcamento` | Cria Ordem de Serviço do tipo Orçamento |
+| POST | `/ordens-servico/servico` | Cria Ordem de Serviço do tipo Serviço Agendado |
+| GET | `/ordens-servico` | Lista OS com filtros e paginação |
+| GET | `/ordens-servico/:id` | Busca uma OS por ID |
+
+Filtros disponíveis em `GET /ordens-servico`:
+
+```text
+busca, usuario_id, cliente_id, equipamento_id, tipo_os_id, status_os_id, prazo_de, prazo_ate, pagina, limite
+```
+
+O campo calculado `prazo_vencido` indica se a `prazo_acordado` já passou e a OS ainda não alcançou um status terminal.
+
 ## Respostas e erros
 
 As respostas de sucesso usam o formato da operação. Desativações retornam `204 No Content`.
